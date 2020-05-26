@@ -36,7 +36,7 @@
             android:background="@drawable/review_border"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="물품에 대한 상세설명을 해주세요"
+            android:hint="보낼 내용을 입력해주세요."
             android:inputType="textMultiLine"
             android:maxLength="200" />
 
@@ -55,13 +55,15 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:id="@+id/sendNoteBtn"
             android:layout_width="0dp"
             android:layout_height="53dp"
             android:layout_weight="1"
             android:background="#00000000"
+            android:onClick="mOnClose"
             android:gravity="center"
             android:padding="16dp"
-            android:text="확인"
+            android:text="전송"
             android:textColor="#6590C3"
             android:textSize="15sp" />
 

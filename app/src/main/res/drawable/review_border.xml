@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?> <!--리뷰 입력을 위한 윤곽선 설정-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="10dp"
+    android:shape="rectangle" >
+
+    <solid android:color="@android:color/transparent" />
+
+    <stroke
+        android:width="2px"
+        android:color="#C0C0C0" />
+
+</shape>
+

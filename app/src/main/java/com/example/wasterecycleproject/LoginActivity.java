@@ -24,7 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
-    RestApiUtil mRestApiUtil;
+    private RestApiUtil mRestApiUtil;
     private EditText idText;
     private EditText pwText;
     private Button loginBtn;
@@ -90,13 +90,11 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),"아이디 비밀번호가 맞지않습니다",Toast.LENGTH_SHORT).show();
                     Log.d("아이디 비밀번호가 맞지않습니다","실패");
                 }
-
             }
 
             @Override
             public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
                 Log.d("통신","실패");
-
             }
         });
 

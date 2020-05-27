@@ -52,4 +52,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
 
+    implementation 'org.parceler:parceler-api:1.1.12' //fragment에서 Activity로 값을 전달시 putExtra를 우리가 형성한 객체도 가능하게 해주는 라이브러리
+    annotationProcessor 'org.parceler:parceler:1.1.12'
+
 }

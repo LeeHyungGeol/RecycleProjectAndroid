@@ -25,8 +25,8 @@ public class RegisterUserActivity extends Activity { //회원가입 창
     private EditText pwText;
     private EditText pwText2;
     private Button registerBtn;
-    RestApiUtil mRestApiUtil;
-    User mUser;
+    private RestApiUtil mRestApiUtil;
+    private User mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

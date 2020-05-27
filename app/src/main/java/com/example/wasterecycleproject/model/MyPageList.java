@@ -1,4 +1,4 @@
-package com.example.wasterecycleproject.models;
+package com.example.wasterecycleproject.model;
 
 public class MyPageList { //마이페이지 쪽지보관함, 게시글 목록 리스트 객체
     public String getTitle() {

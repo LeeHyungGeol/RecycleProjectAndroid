@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.example.wasterecycleproject.UserCommunityActivity;
 import com.example.wasterecycleproject.UserNoteActivity;
 import com.example.wasterecycleproject.R;
-import com.example.wasterecycleproject.models.MyPageList;
+import com.example.wasterecycleproject.model.MyPageList;
 
 import java.util.ArrayList;
 

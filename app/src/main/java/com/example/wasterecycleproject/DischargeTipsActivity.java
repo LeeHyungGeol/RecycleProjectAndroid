@@ -12,8 +12,6 @@ import com.example.wasterecycleproject.model.SearchWordResponseDTO;
 import com.example.wasterecycleproject.util.RestApiUtil;
 import com.example.wasterecycleproject.util.UserToken;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 
 import retrofit2.Call;
@@ -32,33 +30,33 @@ public class DischargeTipsActivity extends AppCompatActivity { //배출 요령 �
         setContentView(R.layout.activity_discharge_tips);
         setActionBar();
         init();
-        getDischargeTips();
+     //   getDischargeTips();
     }
-
-    private void getDischargeTips() {
-        SearchWordDTO searchWordDTO = new SearchWordDTO();
-        searchWordDTO.setSearchWord(searchText.getText().toString());
-
-        mRestApiUtil.getApi().search_word("Token " + UserToken.getToken(), searchWordDTO).enqueue(new Callback<SearchWordResponseDTO>() {
-            @Override
-            public void onResponse(Call<SearchWordResponseDTO> call, Response<SearchWordResponseDTO> response) {
-                if(response.isSuccessful()){
-                    Log.d("discharge","성공");
-                    SearchWordResponseDTO searchWordResponseDTO = response.body();
-                    Log.d("discharge", String.valueOf(searchWordResponseDTO.getTextVoiceDischargeTips().size()));
-                }
-                else{
-                    Log.d("discharge","실패");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SearchWordResponseDTO> call, Throwable t) {
-                Log.d("discharge","실패2");
-
-            }
-        });
-    }
+//
+//    private void getDischargeTips() {
+//        SearchWordDTO searchWordDTO = new SearchWordDTO();
+//        searchWordDTO.setSearchWord(searchText.getText().toString());
+//
+//        mRestApiUtil.getApi().search_word("Token " + UserToken.getToken(), searchWordDTO).enqueue(new Callback<SearchWordResponseDTO>() {
+//            @Override
+//            public void onResponse(Call<SearchWordResponseDTO> call, Response<SearchWordResponseDTO> response) {
+//                if(response.isSuccessful()){
+//                    Log.d("discharge","성공");
+//                    SearchWordResponseDTO searchWordResponseDTO = response.body();
+//                    Log.d("discharge", String.valueOf(searchWordResponseDTO.getTextVoiceDischargeTips().size()));
+//                }
+//                else{
+//                    Log.d("discharge","실패");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SearchWordResponseDTO> call, Throwable t) {
+//                Log.d("discharge","실패2");
+//
+//            }
+//        });
+//    }
 
     private void init() {
         searchWordResponseList = new ArrayList<>();

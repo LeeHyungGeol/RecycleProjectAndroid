@@ -7,21 +7,29 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import com.example.wasterecycleproject.adapter.UserNoteListAdapter;
+import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
+import com.example.wasterecycleproject.model.AllNoteResponseDTO;
+import com.example.wasterecycleproject.model.Message;
+import com.example.wasterecycleproject.util.RestApiUtil;
+import com.example.wasterecycleproject.util.UserToken;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class UserNoteActivity extends AppCompatActivity { //마이페이지에서 쪽지 목록 버튼 클릭시 나타나는 특정 유저의 쪽지 목록
 
-
+    private RestApiUtil mRestApiUtil;
     private RecyclerView recyclerView;
     private UserNoteListAdapter userNoteListAdapter;
     private boolean isLoading;
-    private ArrayList<String> titleList;
-    private ArrayList<String> title;
-    private ArrayList<String> dateList;
-    private ArrayList<String> date;
+    private ArrayList<Message> message;
+    private ArrayList<Message> messageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,13 +47,12 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
 
 
     private void init() {
-        titleList = new ArrayList<>();
-        title = new ArrayList<>();
-        dateList = new ArrayList<>();
-        date = new ArrayList<>();
+        message = new ArrayList<>();
+        messageList = new ArrayList<>();
         isLoading = false;
         recyclerView = findViewById(R.id.userNoteRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRestApiUtil = new RestApiUtil();
         firstData();
         initAdapter();
         initScrollListener();
@@ -53,42 +60,70 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
 
 
     private void firstData() {
-        // 총 아이템이 50개라 가정, 서버에서 특정유저의 전체 쪽지 리스트 받아와서 제목과 날짜를 넣어주면 됨
-        for (int a=0; a<50; a++) {
+        mRestApiUtil.getApi().all_note("Token " + UserToken.getToken()).enqueue(new Callback<AllNoteResponseDTO>() {
+            @Override
+            public void onResponse(Call<AllNoteResponseDTO> call, Response<AllNoteResponseDTO> response) {
+                if(response.isSuccessful())
+                {
+                    userNoteListAdapter.notifyDataSetChanged();
+                    AllNoteResponseDTO allNoteResponseDTO = response.body();
+                    int noteSize = allNoteResponseDTO.getMessage_list().getRecv_message().size();
 
-            titleList.add("쪽지 제목 " + a);
-            dateList.add("쪽지 날짜"+a);
-        }
+                    for(int index=0; index<noteSize;index++){
+                        messageList.add(allNoteResponseDTO.getMessage_list().getRecv_message().get(index));
+                    }
+                    noteSize = allNoteResponseDTO.getMessage_list().getSend_message().size();
+                    for(int index=0; index<noteSize;index++){
+                        messageList.add(allNoteResponseDTO.getMessage_list().getSend_message().get(index));
+                    }
 
-        // 총 아이템에서 10개를 받아옴
-        for (int i=0; i<10; i++) {
-            title.add(titleList.get(i));
-            date.add(dateList.get(i));
-        }
+                    if(messageList.size()<10){
+                        for(int i=0;i<messageList.size();i++){
+                            message.add(messageList.get(i));
+                        }
+                    }
+                    else {
+                        for(int i=0;i<10;i++){
+                            message.add(messageList.get(i));
+                        }
+                    }
+
+                }
+                else{
+
+                    Log.d("UserNoteActivity","response 실패");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AllNoteResponseDTO> call, Throwable t) {
+                Log.d("UserNoteActivity","통신 실패");
+
+            }
+        });
+
     }
 
     private void dataMore() {
-        title.add(null);
-        date.add(null);
-        userNoteListAdapter.notifyItemInserted(title.size() -1 );
+        message.add(null);
+        userNoteListAdapter.notifyItemInserted(message.size() -1 );
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                title.remove(title.size() -1 );
-                date.remove(date.size() -1 );
-                int scrollPosition = title.size();
+                message.remove(message.size() -1 );
+                int scrollPosition = message.size();
                 userNoteListAdapter.notifyItemRemoved(scrollPosition);
                 int currentSize = scrollPosition;
                 int nextLimit = currentSize + 10;
 
                 for (int i=currentSize; i<nextLimit; i++) {
-                    if (i == titleList.size()) {
+                    if (i == messageList.size()) {
                         return;
                     }
-                    title.add(titleList.get(i));
-                    date.add(dateList.get(i));
+                    message.add(messageList.get(i));
                 }
 
                 userNoteListAdapter.notifyDataSetChanged();
@@ -100,7 +135,7 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
 
 
     private void initAdapter() {
-        userNoteListAdapter = new UserNoteListAdapter(title,date);
+        userNoteListAdapter = new UserNoteListAdapter(message);
         recyclerView.setAdapter(userNoteListAdapter);
     }
 
@@ -119,7 +154,7 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!isLoading) {
-                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == title.size() - 1) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == message.size() - 1) {
                         dataMore();
                         isLoading = true;
                     }

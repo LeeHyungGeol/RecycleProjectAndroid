@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.model.LoginDTO;
 import com.example.wasterecycleproject.model.LoginResponseDTO;
 import com.example.wasterecycleproject.model.RegisterResponseDTO;
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                     LoginResponseDTO loginResponseDTO = response.body();
                     Log.d("토큰",loginResponseDTO.getToken());
                     UserToken.setToken(loginResponseDTO.getToken());
+                    setUser(loginResponseDTO.getUser_id(), loginResponseDTO.getToken());
                     Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
                 }
@@ -97,8 +99,11 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d("통신","실패");
             }
         });
+    }
 
-
+    public void setUser(String user_id, String token) {
+        AppManager.getInstance().getUser().setUser_id(user_id);
+        AppManager.getInstance().getUser().setToken(token);
 
     }
 

@@ -76,7 +76,7 @@ public class RegisterUserActivity extends Activity { //회원가입 창
                     finish();
                 }
                 else{
-                    Log.d("회원가입","실패");
+                    Toast.makeText(getApplicationContext(),"동일한 아이디가 존재합니다.",Toast.LENGTH_SHORT).show();
                 }
 
             }

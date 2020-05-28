@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wasterecycleproject.R;
+import com.example.wasterecycleproject.model.Message;
 
 import java.util.List;
 
@@ -21,13 +22,11 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
 
-    public List<String> titleText;
-    public List<String> dateText;
+    public List<Message> messages;
 
 
-    public UserNoteListAdapter(List<String> titleList, List<String> dateList) {
-        titleText = titleList;
-        dateText = dateList;
+    public UserNoteListAdapter(List<Message> message) {
+        messages=message;
     }
 
     @NonNull
@@ -62,13 +61,13 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return titleText == null ? 0 : titleText.size();
+        return messages == null ? 0 : messages.size();
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        return titleText.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        return messages.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
 
@@ -76,12 +75,14 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         TextView titleText;
         TextView dateText;
+        TextView idText;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             titleText = itemView.findViewById(R.id.communityTitle);
             dateText = itemView.findViewById(R.id.communityDate);
+            idText = itemView.findViewById(R.id.communityUserID);
         }
     }
 
@@ -103,10 +104,12 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void populateItemRows(UserNoteListAdapter.ItemViewHolder viewHolder, int position) {
 
-        String title = titleText.get(position);
-        String date = dateText.get(position);
-        viewHolder.titleText.setText(title);
-        viewHolder.dateText.setText(date);
+        String title = messages.get(position).getContent();
+        String id = messages.get(position).getSender_id();
+        String date = messages.get(position).getSend_date();
+        viewHolder.titleText.setText("쪽지 내용: "+title);
+        viewHolder.idText.setText("보낸 사람: "+ id);
+        viewHolder.dateText.setText("보낸 날짜: "+date);
 
     }
 }

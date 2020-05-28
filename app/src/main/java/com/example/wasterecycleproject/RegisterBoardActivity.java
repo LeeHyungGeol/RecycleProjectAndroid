@@ -75,7 +75,7 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
 
         imageView= findViewById(R.id.imageView);
         imagePicker = ImagePicker.create(this)
-                .limit(5);
+                .single();
         gallery = findViewById(R.id.gallery);
         inflater= LayoutInflater.from(this); //동적 이미지 스크롤을 위한 inflater
         communityContext = findViewById(R.id.communityContext);

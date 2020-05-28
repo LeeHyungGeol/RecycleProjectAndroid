@@ -23,14 +23,10 @@ import com.example.wasterecycleproject.model.SearchWordDTO;
 import com.example.wasterecycleproject.model.SearchWordResponseDTO;
 import com.example.wasterecycleproject.util.RestApiUtil;
 import com.example.wasterecycleproject.util.UserToken;
-
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

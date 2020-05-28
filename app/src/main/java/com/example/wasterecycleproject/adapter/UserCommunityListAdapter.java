@@ -6,30 +6,28 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.wasterecycleproject.CommunityDetailActivity;
+import com.example.wasterecycleproject.CommunityFragment;
 import com.example.wasterecycleproject.R;
-
+import com.example.wasterecycleproject.RegisterBoardActivity;
+import com.example.wasterecycleproject.model.Community;
 import java.util.List;
 
 public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-
-    public List<String> titleText;
-    public List<String> dateText;
+    private List<Community> communities;
 
 
-    public UserCommunityListAdapter(List<String> titleList,List<String> dateList) {
-        titleText = titleList;
-        dateText = dateList;
+    public UserCommunityListAdapter(List<Community> communityList) {
+        communities = communityList;
     }
 
     @NonNull
@@ -37,15 +35,15 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ITEM) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_list_item, parent, false);
-            return new UserCommunityListAdapter.ItemViewHolder(view);
+            return new ItemViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_item_loading, parent, false);
-            return new UserCommunityListAdapter.LoadingViewHolder(view);
+            return new LoadingViewHolder(view);
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int position) { //클릭 이벤트 처리
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder,final int position) { //클릭 이벤트 처리
 
         viewHolder.itemView.setOnClickListener(new View.OnClickListener(){
 
@@ -54,28 +52,28 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
                 Context context = v.getContext();
                 Intent intent = new Intent(context, CommunityDetailActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("position",communities.get(position).getIdx());
                 context.startActivity(intent);
-
-                Toast.makeText(context, position +"", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, communities.get(position).getIdx() +"", Toast.LENGTH_LONG).show();
             }
         });
 
-        if (viewHolder instanceof UserCommunityListAdapter.ItemViewHolder) {
-            populateItemRows((UserCommunityListAdapter.ItemViewHolder) viewHolder, position);
-        } else if (viewHolder instanceof UserCommunityListAdapter.LoadingViewHolder) {
-            showLoadingView((UserCommunityListAdapter.LoadingViewHolder) viewHolder, position);
+        if (viewHolder instanceof ItemViewHolder) {
+            populateItemRows((ItemViewHolder) viewHolder, position);
+        } else if (viewHolder instanceof LoadingViewHolder) {
+            showLoadingView((LoadingViewHolder) viewHolder, position);
         }
     }
 
     @Override
     public int getItemCount() {
-        return titleText == null ? 0 : titleText.size();
+        return communities == null ? 0 : communities.size();
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        return titleText.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        return communities.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
 
@@ -83,27 +81,14 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
 
         TextView titleText;
         TextView dateText;
+        TextView idText;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemView.setOnClickListener(new View.OnClickListener(){
-
-                @Override
-                public void onClick(View v) {
-                    int pos = getAdapterPosition();
-                    if (pos != RecyclerView.NO_POSITION) {
-                        // TODO : use pos.
-                    }
-                    else{
-                        Log.d("parkwoojin",Integer.toString(pos));
-                    }
-
-                }
-            });
-
             titleText = itemView.findViewById(R.id.communityTitle);
             dateText = itemView.findViewById(R.id.communityDate);
+            idText = itemView.findViewById(R.id.communityUserID);
         }
     }
 
@@ -119,16 +104,21 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private void showLoadingView(UserCommunityListAdapter.LoadingViewHolder viewHolder, int position) {
+    private void showLoadingView(LoadingViewHolder viewHolder, int position) {
         //
     }
 
-    private void populateItemRows(UserCommunityListAdapter.ItemViewHolder viewHolder, int position) {
+    private void populateItemRows(ItemViewHolder viewHolder, int position) {
 
-        String title = titleText.get(position);
-        String date = dateText.get(position);
-        viewHolder.titleText.setText(title);
-        viewHolder.dateText.setText(date);
+        String title = communities.get(position).getTitle();
+        String id = communities.get(position).getUser_id();
+        String date = communities.get(position).getDate();
+        viewHolder.titleText.setText("제목: "+title);
+        viewHolder.idText.setText("작성자: "+ id);
+        viewHolder.dateText.setText("날짜: "+date);
+
 
     }
+
+
 }

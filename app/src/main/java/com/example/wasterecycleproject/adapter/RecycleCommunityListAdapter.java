@@ -10,29 +10,25 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.wasterecycleproject.CommunityDetailActivity;
 import com.example.wasterecycleproject.CommunityFragment;
+import com.example.wasterecycleproject.PopUpSendNoteActivity;
 import com.example.wasterecycleproject.R;
 import com.example.wasterecycleproject.RegisterBoardActivity;
-
+import com.example.wasterecycleproject.model.Community;
 import java.util.List;
 
 public class RecycleCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-
-    public List<String> titleText;
-    public List<String> dateText;
+    private List<Community> communities;
 
 
-    public RecycleCommunityListAdapter(List<String> titleList,List<String> dateList) {
-        titleText = titleList;
-        dateText = dateList;
+    public RecycleCommunityListAdapter(List<Community> communityList) {
+        communities = communityList;
     }
 
     @NonNull
@@ -57,9 +53,9 @@ public class RecycleCommunityListAdapter extends RecyclerView.Adapter<RecyclerVi
                 Context context = v.getContext();
                 Intent intent = new Intent(context, CommunityDetailActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("position",communities.get(position).getIdx());
                 context.startActivity(intent);
-
-                Toast.makeText(context, position +"", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, communities.get(position).getIdx() +"", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -72,13 +68,13 @@ public class RecycleCommunityListAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemCount() {
-        return titleText == null ? 0 : titleText.size();
+        return communities == null ? 0 : communities.size();
     }
 
 
     @Override
     public int getItemViewType(int position) {
-        return titleText.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
+        return communities.get(position) == null ? VIEW_TYPE_LOADING : VIEW_TYPE_ITEM;
     }
 
 
@@ -86,12 +82,14 @@ public class RecycleCommunityListAdapter extends RecyclerView.Adapter<RecyclerVi
 
         TextView titleText;
         TextView dateText;
+        TextView idText;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
             titleText = itemView.findViewById(R.id.communityTitle);
             dateText = itemView.findViewById(R.id.communityDate);
+            idText = itemView.findViewById(R.id.communityUserID);
         }
     }
 
@@ -113,10 +111,12 @@ public class RecycleCommunityListAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private void populateItemRows(ItemViewHolder viewHolder, int position) {
 
-        String title = titleText.get(position);
-        String date = dateText.get(position);
-        viewHolder.titleText.setText(title);
-        viewHolder.dateText.setText(date);
+        String title = communities.get(position).getTitle();
+        String date = communities.get(position).getDate();
+        String id = communities.get(position).getUser_id();
+        viewHolder.titleText.setText("제목: "+title);
+        viewHolder.dateText.setText("날짜: "+date);
+        viewHolder.idText.setText("작성자: "+ id);
 
     }
 

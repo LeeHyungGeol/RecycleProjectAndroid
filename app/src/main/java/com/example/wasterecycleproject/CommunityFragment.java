@@ -17,6 +17,7 @@ import android.widget.Button;
 
 import com.example.wasterecycleproject.adapter.RecycleCommunityListAdapter;
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
+import com.example.wasterecycleproject.model.Community;
 import com.example.wasterecycleproject.util.RestApiUtil;
 import com.example.wasterecycleproject.util.UserToken;
 
@@ -36,12 +37,8 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
     private RecyclerView recyclerView;
     private RecycleCommunityListAdapter recycleCommunityListAdapter;
     private boolean isLoading;
-    private ArrayList<String> titleList;
-    private ArrayList<String> title;
-    private ArrayList<String> dateList;
-    private ArrayList<String> date;
-    private int communitysize;
-
+    private ArrayList<Community> communityList;
+    private ArrayList<Community> community;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -56,10 +53,8 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
 
     private void init(){
         upLoadBtn = view.findViewById(R.id.upLoadBtn);
-        titleList = new ArrayList<>();
-        title = new ArrayList<>();
-        dateList = new ArrayList<>();
-        date = new ArrayList<>();
+        communityList = new ArrayList<>();
+        community = new ArrayList<>();
         isLoading = false;
         recyclerView = view.findViewById(R.id.allCommunityRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -67,7 +62,6 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
         firstData();
         initAdapter();
         initScrollListener();
-
     }
 
     private void addListener() {
@@ -88,27 +82,27 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
             @Override
             public void onResponse(Call<AllCommunityResponseDTO> call, Response<AllCommunityResponseDTO> response) {
                 if(response.isSuccessful()){
+                    recycleCommunityListAdapter.notifyDataSetChanged();
                     AllCommunityResponseDTO allCommunityResponseDTO = response.body();
-                    communitysize = allCommunityResponseDTO.getCommunity_list().size();
-                    Log.d("커뮤니티 사이즈", String.valueOf(communitysize));
+                    final int communitysize = allCommunityResponseDTO.getCommunity_list().size();
+//                    Log.d("커뮤니티 사이즈", String.valueOf(communitysize));
                     for(int index=0; index<communitysize;index++){
-                        titleList.add(allCommunityResponseDTO.getCommunity_list().get(index).getTitle());
-                        dateList.add(allCommunityResponseDTO.getCommunity_list().get(index).getDate());
+//                        Log.d("타이틀",allCommunityResponseDTO.getCommunity_list().get(index).getTitle());
+//                        Log.d("내용",allCommunityResponseDTO.getCommunity_list().get(index).getDate());
+                        Log.d("아이디",allCommunityResponseDTO.getCommunity_list().get(index).getUser_id());
+                        communityList.add(allCommunityResponseDTO.getCommunity_list().get(index));
                     }
                     if(communitysize<10){
                         for(int i=0;i<communitysize;i++){
-                            title.add(titleList.get(i));
-                            date.add(dateList.get(i));
+                            community.add(communityList.get(i));
                         }
 
                     }
                     else{
                         for(int i=0; i<10; i++){
-                            title.add(titleList.get(i));
-                            date.add(dateList.get(i));
+                            community.add(communityList.get(i));
                         }
                     }
-
                 }
                 else{
                     Log.d("CommunityFragment","response 실패");
@@ -122,30 +116,28 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
 
             }
         });
+
     }
 
     private void dataMore() {
-        title.add(null);
-        date.add(null);
-        recycleCommunityListAdapter.notifyItemInserted(title.size() -1 );
+        community.add(null);
+        recycleCommunityListAdapter.notifyItemInserted(community.size() -1 );
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                title.remove(title.size() -1 );
-                date.remove(date.size() -1 );
-                int scrollPosition = title.size();
+                community.remove(community.size() -1 );
+                int scrollPosition = community.size();
                 recycleCommunityListAdapter.notifyItemRemoved(scrollPosition);
                 int currentSize = scrollPosition;
                 int nextLimit = currentSize + 10;
 
                 for (int i=currentSize; i<nextLimit; i++) {
-                    if (i == titleList.size()) {
+                    if (i == communityList.size()) {
                         return;
                     }
-                    title.add(titleList.get(i));
-                    date.add(dateList.get(i));
+                    community.add(communityList.get(i));
                 }
 
                 recycleCommunityListAdapter.notifyDataSetChanged();
@@ -157,7 +149,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
 
 
     private void initAdapter() {
-        recycleCommunityListAdapter = new RecycleCommunityListAdapter(title,date);
+        recycleCommunityListAdapter = new RecycleCommunityListAdapter(community);
         recyclerView.setAdapter(recycleCommunityListAdapter);
     }
 
@@ -176,7 +168,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!isLoading) {
-                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == title.size() - 1) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == community.size() - 1) {
                         dataMore();
                         isLoading = true;
                     }

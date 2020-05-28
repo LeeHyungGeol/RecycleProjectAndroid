@@ -7,24 +7,36 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
+import com.example.wasterecycleproject.adapter.RecycleCommunityListAdapter;
 import com.example.wasterecycleproject.adapter.UserCommunityListAdapter;
+import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.model.Community;
+import com.example.wasterecycleproject.model.UserCommunityResponseDTO;
+import com.example.wasterecycleproject.util.RestApiUtil;
+import com.example.wasterecycleproject.util.UserToken;
 
 import java.util.ArrayList;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class UserCommunityActivity extends AppCompatActivity { //마이페이지에서 게시글 목록 버튼 클릭시 나타나는 특정 유저의 게시글 목록
 
+    private RestApiUtil mRestApiUtil;
     private RecyclerView recyclerView;
     private UserCommunityListAdapter userCommunityListAdapter;
     private boolean isLoading;
-    private ArrayList<String> titleList;
-    private ArrayList<String> title;
-    private ArrayList<String> dateList;
-    private ArrayList<String> date;
+    private ArrayList<Community> communityList;
+    private ArrayList<Community> community;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getInstance().setContext(this);
+        AppManager.getInstance().setResources(getResources());
         setContentView(R.layout.activity_user_community);
         setActionBar();
         init();
@@ -38,13 +50,12 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
 
 
     private void init() {
-        titleList = new ArrayList<>();
-        title = new ArrayList<>();
-        dateList = new ArrayList<>();
-        date = new ArrayList<>();
+        communityList = new ArrayList<>();
+        community = new ArrayList<>();
         isLoading = false;
         recyclerView = findViewById(R.id.userCommunityRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRestApiUtil = new RestApiUtil();
         firstData();
         initAdapter();
         initScrollListener();
@@ -52,42 +63,70 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
 
 
     private void firstData() {
-        // 총 아이템이 50개라 가정, 서버에서 특정 유저의 전체 커뮤니티 리스트 받아와서 제목과 날짜를 넣어주면 됨
-        for (int a=0; a<50; a++) {
+        String user_id = AppManager.getInstance().getUser().getUser_id();
+        mRestApiUtil.getApi().user_community("Token " + UserToken.getToken(),user_id)
+                .enqueue(new Callback<UserCommunityResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<UserCommunityResponseDTO> call, Response<UserCommunityResponseDTO> response) {
+                        if(response.isSuccessful()){
+                            Log.d("유저 커뮤니티 통신성공","통신성공");
+                            userCommunityListAdapter.notifyDataSetChanged();
+                            UserCommunityResponseDTO userCommunityResponseDTO = response.body();
+                            final int communitysize = userCommunityResponseDTO.getCommunity_list().size();
+//                    Log.d("커뮤니티 사이즈", String.valueOf(communitysize));
+                            for(int index=0; index<communitysize;index++){
+//                        Log.d("타이틀",allCommunityResponseDTO.getCommunity_list().get(index).getTitle());
+//                        Log.d("내용",allCommunityResponseDTO.getCommunity_list().get(index).getDate());
+                                Log.d("아이디",userCommunityResponseDTO.getCommunity_list().get(index).getUser_id());
+                                communityList.add(userCommunityResponseDTO.getCommunity_list().get(index));
+                            }
+                            if(communitysize<10){
+                                for(int i=0;i<communitysize;i++){
+                                    community.add(communityList.get(i));
+                                }
 
-            titleList.add("게시글 제목 " + a);
-            dateList.add("게시글 날짜"+a);
-        }
+                            }
+                            else{
+                                for(int i=0; i<10; i++){
+                                    community.add(communityList.get(i));
+                                }
+                            }
+                        }
+                        else{
+                            Log.d("UserCommunityActivity","response 실패");
+                        }
+                    }
 
-        // 총 아이템에서 10개를 받아옴
-        for (int i=0; i<10; i++) {
-            title.add(titleList.get(i));
-            date.add(dateList.get(i));
-        }
+                    @Override
+                    public void onFailure(Call<UserCommunityResponseDTO> call, Throwable t) {
+                        Log.d("UserCommunityActivity","통신 실패");
+
+                    }
+                });
+
     }
 
+
+
     private void dataMore() {
-        title.add(null);
-        date.add(null);
-        userCommunityListAdapter.notifyItemInserted(title.size() -1 );
+        community.add(null);
+        userCommunityListAdapter.notifyItemInserted(community.size() -1 );
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                title.remove(title.size() -1 );
-                date.remove(date.size() -1 );
-                int scrollPosition = title.size();
+                community.remove(community.size() -1 );
+                int scrollPosition = community.size();
                 userCommunityListAdapter.notifyItemRemoved(scrollPosition);
                 int currentSize = scrollPosition;
                 int nextLimit = currentSize + 10;
 
                 for (int i=currentSize; i<nextLimit; i++) {
-                    if (i == titleList.size()) {
+                    if (i == communityList.size()) {
                         return;
                     }
-                    title.add(titleList.get(i));
-                    date.add(dateList.get(i));
+                    community.add(communityList.get(i));
                 }
 
                 userCommunityListAdapter.notifyDataSetChanged();
@@ -99,7 +138,7 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
 
 
     private void initAdapter() {
-        userCommunityListAdapter = new UserCommunityListAdapter(title,date);
+        userCommunityListAdapter = new UserCommunityListAdapter(community);
         recyclerView.setAdapter(userCommunityListAdapter);
     }
 
@@ -118,7 +157,7 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
                 LinearLayoutManager linearLayoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if (!isLoading) {
-                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == title.size() - 1) {
+                    if (linearLayoutManager != null && linearLayoutManager.findLastCompletelyVisibleItemPosition() == community.size() - 1) {
                         dataMore();
                         isLoading = true;
                     }
@@ -126,4 +165,5 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
             }
         });
     }
+
 }

@@ -6,6 +6,24 @@ public class Community {
     private String date;
     private int share_complete;
     private String user_id;
+    private String content;
+    private String image;
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public int getIdx() {
         return idx;

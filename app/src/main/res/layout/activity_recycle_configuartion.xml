@@ -65,6 +65,32 @@
     </LinearLayout>
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="규격 정보"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/configuration_dimension"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/configuration_dimension2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp" />
+    <TextView
+        android:id="@+id/configuration_dimension3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp" />
+
+
     <Button
         android:id="@+id/dischargeBtn"
         android:layout_width="140dp"

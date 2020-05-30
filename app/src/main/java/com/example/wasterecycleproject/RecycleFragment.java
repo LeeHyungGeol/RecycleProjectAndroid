@@ -62,13 +62,14 @@ public class RecycleFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_recycle, container, false);
         init();
         addListener();
+        Intent intent=new Intent(getActivity(),PopupHelpActivity.class);
+        startActivity(intent);
         return view;
     }
 
 
     public void init() {
         detection_list = new ArrayList<Detection_List>();
-
         imageView = view.findViewById(R.id.ImageView);
         categoryChkBtn = view.findViewById(R.id.categoryChkBtn);
         dimensionChkBtn = view.findViewById(R.id.dimensionChkBtn);
@@ -110,15 +111,15 @@ public class RecycleFragment extends Fragment {
 
             @Override
             public void onClick(View v) { //규격 측정 버튼 리스너
-                if(imgFile == null) {
-                    confirmDialog.setMessage("이미지를 선택해주세요.");
-                    confirmDialog.show();
-                    return;
+
+                try {
+                    Intent intent=new Intent(AppManager.getInstance().getContext(), MeasureActivity.class);
+                    Log.d("imgFilePath : ", imgFile.getAbsolutePath());
+                    intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
+                    startActivity(intent);
+                }catch (Exception e){
+                    Toast.makeText(getActivity(),"사진을 입력해주세요",Toast.LENGTH_SHORT).show();
                 }
-                Intent intent=new Intent(AppManager.getInstance().getContext(), MeasureActivity.class);
-                Log.d("imgFilePath : ", imgFile.getAbsolutePath());
-                intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
-                startActivity(intent);
             }
         });
 
@@ -147,7 +148,7 @@ public class RecycleFragment extends Fragment {
         helpBtn.setOnClickListener(new Button.OnClickListener(){ //도움말 리스너
 
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { //도움말 클릭시
                 Intent intent=new Intent(getActivity(),PopupHelpActivity.class);
                 startActivity(intent);
 

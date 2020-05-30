@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import com.example.wasterecycleproject.adapter.UserNoteListAdapter;
+import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
 import com.example.wasterecycleproject.model.AllNoteResponseDTO;
 import com.example.wasterecycleproject.model.Message;
@@ -34,6 +37,8 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AppManager.getInstance().setContext(this);
+        AppManager.getInstance().setResources(getResources());
         setContentView(R.layout.activity_user_note);
         setActionBar();
         init();
@@ -60,6 +65,7 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
 
 
     private void firstData() {
+        progressON("로딩중입니다");
         mRestApiUtil.getApi().all_note("Token " + UserToken.getToken()).enqueue(new Callback<AllNoteResponseDTO>() {
             @Override
             public void onResponse(Call<AllNoteResponseDTO> call, Response<AllNoteResponseDTO> response) {
@@ -87,6 +93,7 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
                             message.add(messageList.get(i));
                         }
                     }
+                    progressOFF();
 
                 }
                 else{
@@ -161,5 +168,13 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
                 }
             }
         });
+    }
+
+
+    public void progressON(String message) {
+        ImageManager.getInstance().progressON((Activity)AppManager.getInstance().getContext(), message);
+    }
+    public void progressOFF() {
+        ImageManager.getInstance().progressOFF();
     }
 }

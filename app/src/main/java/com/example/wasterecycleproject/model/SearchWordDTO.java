@@ -1,6 +1,6 @@
 package com.example.wasterecycleproject.model;
 
-public class SearchWordDTO {
+public class  SearchWordDTO {
     private String searchWord;
 
     public String getSearchWord() {

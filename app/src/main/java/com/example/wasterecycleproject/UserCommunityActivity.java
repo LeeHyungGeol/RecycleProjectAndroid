@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.util.Log;
 import com.example.wasterecycleproject.adapter.RecycleCommunityListAdapter;
 import com.example.wasterecycleproject.adapter.UserCommunityListAdapter;
 import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.Community;
 import com.example.wasterecycleproject.model.UserCommunityResponseDTO;
 import com.example.wasterecycleproject.util.RestApiUtil;
@@ -63,6 +65,7 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
 
 
     private void firstData() {
+        progressON("로딩중입니다");
         String user_id = AppManager.getInstance().getUser().getUser_id();
         mRestApiUtil.getApi().user_community("Token " + UserToken.getToken(),user_id)
                 .enqueue(new Callback<UserCommunityResponseDTO>() {
@@ -91,6 +94,7 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
                                     community.add(communityList.get(i));
                                 }
                             }
+                            progressOFF();
                         }
                         else{
                             Log.d("UserCommunityActivity","response 실패");
@@ -164,6 +168,14 @@ public class UserCommunityActivity extends AppCompatActivity { //마이페이지
                 }
             }
         });
+    }
+
+
+    public void progressON(String message) {
+        ImageManager.getInstance().progressON((Activity)AppManager.getInstance().getContext(), message);
+    }
+    public void progressOFF() {
+        ImageManager.getInstance().progressOFF();
     }
 
 }

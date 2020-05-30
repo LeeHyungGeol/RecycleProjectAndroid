@@ -30,37 +30,92 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textView1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:alpha="0.87"
-            android:gravity="center"
             android:text="품목 확인 방법"
             android:textColor="#000"
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="- 원하는 품목의 정면 사진을 찍어주세요"
+            android:textColor="#4A4747" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 품목 확인 클릭" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:alpha="0.87"
-            android:gravity="center"
             android:text="길이측정 방법"
             android:textColor="#000"
             android:textSize="15sp" />
 
+        <Button
+            android:id="@+id/imageDownladBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#3589A3"
+            android:padding="5dp"
+            android:text="측정을 위한 이미지 다운로드"
+            android:textColor="#FFFFFF" />
+
         <TextView
-            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="- 상단 버튼을 통해 이미지 다운로드"
+            android:textColor="#4A4747" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 다운받은 이미지를 출력 후 \n  원하는 품목에 부착" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 이미지를 촬영 후 길이 측정 클릭" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 촬영시에 이미지와 배경이 구분되야함" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="3dp"
             android:alpha="0.87"
-            android:gravity="center"
             android:text="올바른 분리배출 방법"
             android:textColor="#000"
             android:textSize="15sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 캔, 페트병, 박스의 분리수거 사진을 \n  찍어주세요" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#4A4747"
+            android:text="- 올바른 분리배출 확인 클릭" />
     </LinearLayout>
     <!-- Notice -->
     <View

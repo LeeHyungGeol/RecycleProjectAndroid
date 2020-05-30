@@ -1,5 +1,6 @@
 package com.example.wasterecycleproject;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,6 +17,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.wasterecycleproject.adapter.RecycleCommunityListAdapter;
+import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
 import com.example.wasterecycleproject.model.Community;
 import com.example.wasterecycleproject.util.RestApiUtil;
@@ -46,6 +49,8 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
 
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_community, container, false);
+        AppManager.getInstance().setContext(getActivity());
+        AppManager.getInstance().setResources(getResources());
         init();
         addListener();
         return view;
@@ -77,6 +82,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
     }
 
     private void firstData() {
+        progressON("로딩중입니다");
 
         mRestApiUtil.getApi().all_community("Token " + UserToken.getToken()).enqueue(new Callback<AllCommunityResponseDTO>() {
             @Override
@@ -85,11 +91,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
                     recycleCommunityListAdapter.notifyDataSetChanged();
                     AllCommunityResponseDTO allCommunityResponseDTO = response.body();
                     final int communitysize = allCommunityResponseDTO.getCommunity_list().size();
-//                    Log.d("커뮤니티 사이즈", String.valueOf(communitysize));
                     for(int index=0; index<communitysize;index++){
-//                        Log.d("타이틀",allCommunityResponseDTO.getCommunity_list().get(index).getTitle());
-//                        Log.d("내용",allCommunityResponseDTO.getCommunity_list().get(index).getDate());
-                        Log.d("아이디",allCommunityResponseDTO.getCommunity_list().get(index).getUser_id());
                         communityList.add(allCommunityResponseDTO.getCommunity_list().get(index));
                     }
                     if(communitysize<10){
@@ -103,6 +105,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
                             community.add(communityList.get(i));
                         }
                     }
+                    progressOFF();
                 }
                 else{
                     Log.d("CommunityFragment","response 실패");
@@ -178,6 +181,13 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
     }
 
 
+
+    public void progressON(String message) {
+        ImageManager.getInstance().progressON((Activity)AppManager.getInstance().getContext(), message);
+    }
+    public void progressOFF() {
+        ImageManager.getInstance().progressOFF();
+    }
 
 
 

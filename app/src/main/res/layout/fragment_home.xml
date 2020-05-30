@@ -64,12 +64,15 @@
             android:text="지역 설정"
             android:textSize="20sp" />
 
+
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/locationBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="자신의 위치를 설정해 오늘의 배출요령 확인" />
+            android:background="#52668F"
+            android:text="자신의 위치를 설정해 오늘의 배출정보 확인"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 
@@ -82,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="오늘의 배출 요령"
+            android:text="오늘의 배출 정보"
             android:textSize="20sp" />
     </LinearLayout>
 

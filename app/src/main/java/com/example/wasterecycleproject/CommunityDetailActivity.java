@@ -26,10 +26,7 @@ import retrofit2.Response;
 
 public class CommunityDetailActivity extends AppCompatActivity {
 
-    private ConfirmDialog confirmDialog;
     private Button sendNoteBtn;
-    private TextView detailTitle;
-    private TextView detailContext;
     private TextView detailID;
     private ImageView detailImage;
     private RestApiUtil mRestApiUtil;
@@ -44,7 +41,6 @@ public class CommunityDetailActivity extends AppCompatActivity {
 
         AppManager.getInstance().setContext(this);
         AppManager.getInstance().setResources(getResources());
-
         setContentView(R.layout.activity_community_detail);
         init();
         addListener();
@@ -68,8 +64,6 @@ public class CommunityDetailActivity extends AppCompatActivity {
 
     private void init() {
         sendNoteBtn = findViewById(R.id.sendNoteBtn);
-        detailContext = findViewById(R.id.detailContext);
-        detailTitle = findViewById(R.id.detailTitle);
         detailID = findViewById(R.id.detailID);
         detailImage = findViewById(R.id.detailImage);
         mRestApiUtil = new RestApiUtil();
@@ -87,7 +81,6 @@ public class CommunityDetailActivity extends AppCompatActivity {
 
 
     private void showDetail() {
-        confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext());
         progressON("게시글을 불러오는 중입니다");
 
         mRestApiUtil.getApi().detail_community("Token " + UserToken.getToken(),communityidx).enqueue(new Callback<CommunityDetailResponseDTO>() {
@@ -101,7 +94,7 @@ public class CommunityDetailActivity extends AppCompatActivity {
                     user_id=communityDetailResponseDTO.getCommunity().getUser_id();
                     detailID.setText(user_id);
                     Glide.with(CommunityDetailActivity.this)
-                            .load("http://28c6420c3035.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
+                            .load("http://4c7008c70751.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
                             .into(detailImage);
                     Log.d("CommmunityDetail","response 성공");
 

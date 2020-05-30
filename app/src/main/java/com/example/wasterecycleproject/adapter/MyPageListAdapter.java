@@ -8,17 +8,26 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.wasterecycleproject.LoginActivity;
 import com.example.wasterecycleproject.UserCommunityActivity;
 import com.example.wasterecycleproject.UserNoteActivity;
 import com.example.wasterecycleproject.R;
+import com.example.wasterecycleproject.model.LogoutResponseDTO;
 import com.example.wasterecycleproject.model.MyPageList;
+import com.example.wasterecycleproject.util.RestApiUtil;
+import com.example.wasterecycleproject.util.UserToken;
 
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyPageListAdapter extends BaseAdapter{
 
     private ArrayList<MyPageList> myPageList = new ArrayList<MyPageList>();
-
+    private RestApiUtil mRestApiUtil;
 
     @Override
     public int getCount() {
@@ -63,9 +72,28 @@ public class MyPageListAdapter extends BaseAdapter{
                 }
                 else if(pos==2){ //위치 설정 클릭
                     Toast.makeText(context,"위치설정 클릭",Toast.LENGTH_SHORT).show();
+
                 }
                 else if(pos==3){ //로그아웃 버튼 클릭
-                    Toast.makeText(context,"로그아웃 클릭",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"로그아웃되었습니다",Toast.LENGTH_SHORT).show();
+                    mRestApiUtil = new RestApiUtil();
+                    mRestApiUtil.getApi().logout("Token " + UserToken.getToken()).enqueue(new Callback<LogoutResponseDTO>() {
+                        @Override
+                        public void onResponse(Call<LogoutResponseDTO> call, Response<LogoutResponseDTO> response) {
+                            if(response.isSuccessful()){
+                                context.startActivity(new Intent(context, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                            }
+                            else{
+                                Toast.makeText(context,"연결을 확인해주세요",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<LogoutResponseDTO> call, Throwable t) {
+
+                        }
+                    });
+
                 }
 
             }

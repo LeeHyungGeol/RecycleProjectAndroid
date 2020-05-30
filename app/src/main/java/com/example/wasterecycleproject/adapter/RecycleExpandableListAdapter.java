@@ -1,6 +1,7 @@
 package com.example.wasterecycleproject.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.wasterecycleproject.HomeFragment;
 import com.example.wasterecycleproject.R;
+import com.example.wasterecycleproject.model.LocationInformation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,7 @@ public class RecycleExpandableListAdapter extends BaseExpandableListAdapter { //
 
     Context context;
     List<String> listGroup;
+    List<LocationInformation> locationInformations;
     HashMap<String,List<String>> listItem;
     public RecycleExpandableListAdapter(Context context, List<String> listGroup, HashMap<String,List<String>>
                                         listItem){
@@ -32,17 +35,17 @@ public class RecycleExpandableListAdapter extends BaseExpandableListAdapter { //
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this.listItem.get(this.listGroup.get(groupPosition)).size();
+        return 4;
     }
 
     @Override
     public Object getGroup(int groupPosition) {
-        return this.listGroup.get(groupPosition);
+        return listGroup.get(groupPosition);
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return this.listItem.get(this.listGroup.get(groupPosition)).get(childPosition);
+        return listItem.get(listGroup.get(groupPosition)).get(childPosition);
     }
 
     @Override

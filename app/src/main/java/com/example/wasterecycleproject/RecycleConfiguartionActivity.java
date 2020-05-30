@@ -1,16 +1,12 @@
 package com.example.wasterecycleproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,9 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.wasterecycleproject.adapter.RecycleDimensionListAdapter;
 import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.DetectionResponseDTO;
@@ -55,9 +49,9 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
     private Button dischargeBtn;
     private DetectionResponseDTO detectionResponseDTO;
     private TextView dimensionText;
-    private TextView dimensionText2;
-    private TextView dimensionText3;
     private ImageView imageView;
+    private Boolean properOrNot;
+    private String selectedItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,11 +64,6 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
         initSpinner();
         DetectionCategory();
         addListener();
-        imageView = findViewById(R.id.ImageView);
-        intent = getIntent();                                   // RecycleFragment 로부터 받은 intent
-        imgPath = intent.getStringExtra("imgFilePath");  // intent 에서 얻은 imgPath
-        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
-        imageView.setImageBitmap(bitmap);
     }
 
     private void setActionBar() {
@@ -90,8 +79,12 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
         detection_lists = new ArrayList<>();
         dischargeBtn = findViewById(R.id.dischargeBtn);
         dimensionText = findViewById(R.id.configuration_dimension);
-        dimensionText2 = findViewById(R.id.configuration_dimension2);
-        dimensionText3 = findViewById(R.id.configuration_dimension3);
+        imageView = findViewById(R.id.ImageView);
+        intent = getIntent();                                   // RecycleFragment 로부터 받은 intent
+        imgPath = intent.getStringExtra("imgFilePath");  // intent 에서 얻은 imgPath
+        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
+        imageView.setImageBitmap(bitmap);
+        properOrNot= false;
     }
 
     private void initSpinner(){
@@ -103,25 +96,21 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
     }
 
     private void addListener() {
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
 
         dischargeBtn.setOnClickListener(new Button.OnClickListener(){ //배출요령 확인 버튼 눌렀을때
 
             @Override
             public void onClick(View v) { //해당하는 품목의 배출요령으로 이동하게
-
-                Intent intent=new Intent(RecycleConfiguartionActivity.this,DischargeTipsActivity.class);
-                startActivity(intent);
+                if(properOrNot && !selectedItem.equals("선택해주세요")) //품목 확인 성공 후 배출 요령 버튼 클릭 시 & 맨 처음 선택해주세요를 선택하지 않았을시
+                {
+                    Intent intent=new Intent(RecycleConfiguartionActivity.this,DischargeTipsActivity.class);
+                    intent.putExtra("searchWord",selectedItem);
+                    startActivity(intent);
+                }
+                else{ //품목 확인 실패 후 배출 요령 버튼 클릭 시
+                    confirmDialog.setMessage("배출 요령을 확인할 수 없습니다");
+                    confirmDialog.show();
+                }
 
             }
         });
@@ -160,6 +149,7 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
                             progressOFF();
                             confirmDialog.setMessage("품목 확인 실패");  //딥러닝에서 결과가 안나왔을때 //빈 리스트 //서버에서 주는 것이 아무것도 없음
                             confirmDialog.show();
+                            properOrNot= false;
 
                         }
                         else {
@@ -167,12 +157,33 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
                             Log.d("품목 확인", "성공");
                             confirmDialog.setMessage("품목 확인 성공");
                             confirmDialog.show();
+                            properOrNot= true;
                             detectionResponseDTO = response.body();
                             detection_lists = detectionResponseDTO.getDetection_list();
-                            Log.d("규격",detectionResponseDTO.getDetection_list().get(0).getRegulation().get(0).getCg_name());
-                            dimensionText.setText(detectionResponseDTO.getDetection_list().get(0).getRegulation().get(0).getCg_name());
-                            dimensionText2.setText(detectionResponseDTO.getDetection_list().get(0).getRegulation().get(1).getCg_name());
-                            dimensionText3.setText(detectionResponseDTO.getDetection_list().get(0).getRegulation().get(2).getCg_name());
+
+                            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                    StringBuilder stringBuilder = new StringBuilder("");
+                                    if(position==0){
+                                        selectedItem = "선택해주세요";
+                                    }
+                                    else{
+                                        selectedItem = detection_lists.get(position-1).getCg_name();
+                                        Log.d("선택된 아이템",selectedItem);
+                                        for(int i=0; i<detection_lists.get(position-1).getRegulation().size();i++){
+                                            stringBuilder.append(detectionResponseDTO.getDetection_list().get(position-1).getRegulation().get(i).getCg_name()).append('\n');
+
+                                        }
+                                    }
+                                    dimensionText.setText(stringBuilder);
+
+
+                                }
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+                                }
+                            });
 
                             if(detection_lists != null) {
                                 for (int i = 0; i < detection_lists.size(); i++) {
@@ -185,7 +196,7 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
                     else {
                         Log.d("이미지 업로드", "실패");
                         progressOFF();
-                        confirmDialog.setMessage("이미지 확인 실패");  //딥러닝에서 결과가 안나왔을때 //빈 리스트 //서버에서 주는 것이 아무것도 없음
+                        confirmDialog.setMessage("품목 확인 실패");  //딥러닝에서 결과가 안나왔을때 //빈 리스트 //서버에서 주는 것이 아무것도 없음
                         confirmDialog.show();
                     }
                 }

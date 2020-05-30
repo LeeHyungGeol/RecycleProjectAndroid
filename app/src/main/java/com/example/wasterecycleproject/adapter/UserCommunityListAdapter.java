@@ -54,7 +54,6 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("position",communities.get(position).getIdx());
                 context.startActivity(intent);
-                Toast.makeText(context, communities.get(position).getIdx() +"", Toast.LENGTH_LONG).show();
             }
         });
 

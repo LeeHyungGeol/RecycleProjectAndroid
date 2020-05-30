@@ -2,7 +2,7 @@ package com.example.wasterecycleproject.model;
 
 public class Discharge {
     private int idx;
-    private int category_m_idx;
+    private String category_m_name;
     private String content;
     private String item_corresponding;
     private String item_discorresponding;
@@ -15,12 +15,12 @@ public class Discharge {
         this.idx = idx;
     }
 
-    public int getCategory_m_idx() {
-        return category_m_idx;
+    public String getCategory_m_name() {
+        return category_m_name;
     }
 
-    public void setCategory_m_idx(int category_m_idx) {
-        this.category_m_idx = category_m_idx;
+    public void setCategory_m_name(String category_m_name) {
+        this.category_m_name = category_m_name;
     }
 
     public String getContent() {

@@ -2,11 +2,14 @@ package com.example.wasterecycleproject.util;
 
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
 import com.example.wasterecycleproject.model.AllNoteResponseDTO;
-import com.example.wasterecycleproject.model.Community;
 import com.example.wasterecycleproject.model.CommunityDetailResponseDTO;
 import com.example.wasterecycleproject.model.DetectionResponseDTO;
+import com.example.wasterecycleproject.model.LocationUpdateDTO;
+import com.example.wasterecycleproject.model.LocationUpdateResponseDTO;
+import com.example.wasterecycleproject.model.LocationWatseResponseDTO;
 import com.example.wasterecycleproject.model.LoginDTO;
 import com.example.wasterecycleproject.model.LoginResponseDTO;
+import com.example.wasterecycleproject.model.LogoutResponseDTO;
 import com.example.wasterecycleproject.model.MeasureLengthResponseDTO;
 import com.example.wasterecycleproject.model.RegisterResponseDTO;
 import com.example.wasterecycleproject.model.SearchWordDTO;
@@ -15,6 +18,7 @@ import com.example.wasterecycleproject.model.SendNoteDTO;
 import com.example.wasterecycleproject.model.SendNoteResponseDTO;
 import com.example.wasterecycleproject.model.User;
 import com.example.wasterecycleproject.model.UserCommunityResponseDTO;
+import com.example.wasterecycleproject.model.UserProfileResponse;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -28,8 +32,7 @@ import retrofit2.http.Path;
 
 
 public interface RestApi {
-    String BASE_URL = "http://28c6420c3035.ngrok.io/";
-
+    String BASE_URL = "http://f57fe3504c71.ngrok.io/";
 
     @POST("userApp/auth/register/")
     Call<RegisterResponseDTO> register(@Body User user);
@@ -62,6 +65,18 @@ public interface RestApi {
     @Multipart
     @POST("measureApp/measure/")
     Call<MeasureLengthResponseDTO> measure_length(@Header("Authorization") String token, @Part MultipartBody.Part image);
+
+    @GET("locationApp/location_waste_information/")
+    Call<LocationWatseResponseDTO> location_waste_information(@Header("Authorization") String token);
+
+    @GET("userApp/userprofile/")
+    Call<UserProfileResponse> user_profile(@Header("Authorization") String token);
+
+    @POST("userApp/auth/logout/")
+    Call<LogoutResponseDTO>logout(@Header("Authorization") String token);
+
+    @POST("locationApp/update_location/")
+    Call<LocationUpdateResponseDTO>location_update(@Header("Authorization") String token, @Body LocationUpdateDTO locationUpdateDTO);
 
 
 }

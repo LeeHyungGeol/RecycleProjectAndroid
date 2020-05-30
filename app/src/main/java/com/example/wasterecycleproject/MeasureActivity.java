@@ -160,7 +160,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                         System.out.println(measureArrayList.size());
 
                         Glide.with(AppManager.getInstance().getContext())
-                                .load("http://28c6420c3035.ngrok.io" + measureArrayList.get(1).getImage())
+                                .load("http://3fc7e29c561a.ngrok.io" + measureArrayList.get(1).getImage())
                                 .into(imageView);
 
                         progressOFF();

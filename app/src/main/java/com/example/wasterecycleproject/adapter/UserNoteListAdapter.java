@@ -21,7 +21,6 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
-
     public List<Message> messages;
 
 
@@ -33,7 +32,7 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_item, parent, false);
             return new UserNoteListAdapter.ItemViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_item_loading, parent, false);
@@ -48,7 +47,7 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View v) {
                 Context context = v.getContext();
-                Toast.makeText(context, position +"", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, position +"", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -73,16 +72,18 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private class ItemViewHolder extends RecyclerView.ViewHolder {
 
-        TextView titleText;
+        TextView contentText;
+        TextView senderIdText;
+        TextView recvIdText;
         TextView dateText;
-        TextView idText;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            titleText = itemView.findViewById(R.id.communityTitle);
-            dateText = itemView.findViewById(R.id.communityDate);
-            idText = itemView.findViewById(R.id.communityUserID);
+            contentText = itemView.findViewById(R.id.noteContent);
+            senderIdText = itemView.findViewById(R.id.noteSenderId);
+            recvIdText = itemView.findViewById(R.id.noteRecvId);
+            dateText = itemView.findViewById(R.id.noteDate);
         }
     }
 
@@ -104,11 +105,14 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     private void populateItemRows(UserNoteListAdapter.ItemViewHolder viewHolder, int position) {
 
-        String title = messages.get(position).getContent();
-        String id = messages.get(position).getSender_id();
+        String content = messages.get(position).getContent();
+        String sender = messages.get(position).getSender_id();
+        String reciver = messages.get(position).getReceiver_id();
         String date = messages.get(position).getSend_date();
-        viewHolder.titleText.setText("쪽지 내용: "+title);
-        viewHolder.idText.setText("보낸 사람: "+ id);
+
+        viewHolder.contentText.setText("쪽지 내용: "+content);
+        viewHolder.senderIdText.setText("보낸 사람: "+ sender);
+        viewHolder.recvIdText.setText("받는 사람:"+reciver);
         viewHolder.dateText.setText("보낸 날짜: "+date);
 
     }

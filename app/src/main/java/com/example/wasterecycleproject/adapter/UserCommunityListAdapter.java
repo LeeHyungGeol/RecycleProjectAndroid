@@ -112,9 +112,16 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
         String title = communities.get(position).getTitle();
         String id = communities.get(position).getUser_id();
         String date = communities.get(position).getDate();
+        String str;
+        String[] dates = date.split("\\.");
+        String[] a = dates[0].split("T");
+        String[] b = a[0].split("-");
+        String[] c = a[1].split(":");
+        str= b[0]+"년 "+b[1]+"월 "+b[2]+"일 "+c[0]+"시 "+c[1]+"분";
+
         viewHolder.titleText.setText("제목: "+title);
         viewHolder.idText.setText("작성자: "+ id);
-        viewHolder.dateText.setText("날짜: "+date);
+        viewHolder.dateText.setText("날짜: "+str);
 
 
     }

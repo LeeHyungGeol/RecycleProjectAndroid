@@ -22,7 +22,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#608DD6"
+        android:background="@drawable/main_button_background"
         android:orientation="vertical"
         android:padding="10dp">
 

@@ -65,6 +65,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginLeft="60dp"
+        android:background="@drawable/main_button_background"
+        android:textColor="#FFFFFF"
         android:text="로그인"
         app:layout_constraintBaseline_toBaselineOf="@+id/registerBtn"
         app:layout_constraintStart_toStartOf="parent" />
@@ -76,6 +78,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="34dp"
+        android:background="@drawable/main_button_background"
+        android:textColor="#FFFFFF"
         android:text="회원가입"
         app:layout_constraintStart_toEndOf="@+id/loginBtn"
         app:layout_constraintTop_toBottomOf="@+id/pwText" />

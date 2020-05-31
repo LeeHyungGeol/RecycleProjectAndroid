@@ -109,11 +109,17 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         String sender = messages.get(position).getSender_id();
         String reciver = messages.get(position).getReceiver_id();
         String date = messages.get(position).getSend_date();
+        String str;
+        String[] dates = date.split("\\.");
+        String[] a = dates[0].split("T");
+        String[] b = a[0].split("-");
+        String[] c = a[1].split(":");
+        str= b[0]+"년 "+b[1]+"월 "+b[2]+"일 "+c[0]+"시 "+c[1]+"분";
 
         viewHolder.contentText.setText("쪽지 내용: "+content);
         viewHolder.senderIdText.setText("보낸 사람: "+ sender);
         viewHolder.recvIdText.setText("받는 사람:"+reciver);
-        viewHolder.dateText.setText("보낸 날짜: "+date);
+        viewHolder.dateText.setText("보낸 날짜: "+str);
 
     }
 }

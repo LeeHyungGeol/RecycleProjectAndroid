@@ -93,5 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
+        android:background="@drawable/main_button_background"
+        android:textColor="#FFFFFF"
         android:text="배출요령 확인하기" />
 </LinearLayout>

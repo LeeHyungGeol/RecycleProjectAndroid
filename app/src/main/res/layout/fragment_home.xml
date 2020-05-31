@@ -70,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#52668F"
+            android:background="@drawable/main_button_background"
             android:text="자신의 위치를 설정해 오늘의 배출정보 확인"
             android:textColor="#FFFFFF" />
 

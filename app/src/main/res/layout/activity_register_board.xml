@@ -97,6 +97,8 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:text="게시"
+        android:background="@drawable/main_button_background"
+        android:textColor="#FFFFFF"
         android:textSize="14sp" />
 
 

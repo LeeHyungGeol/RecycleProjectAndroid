@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 
 public class PopupHelpActivity extends Activity { //RecycleFragment 에 있는 도움말 버튼 클릭시 나타나는 팝업
     private Button imageDownloadBtn;
-    private final String DOWNLOAD_FILE="https://postfiles.pstatic.net/MjAyMDA1MzBfNjUg/MDAxNTkwODQ1NTQ3Njgz.JEK9G8qb5DhtzeJYX4dqz-4RWze9j8aACZmrg6RXdCMg.bFID79rLcitnAP5ym0ZTd1vzV1I4YOYGJ_5jZv6DiWcg.JPEG.dbslzld15/0001.jpg?type=w773"; //마커 다운로드 주소
+    private final String DOWNLOAD_FILE="https://bit.ly/2yNTkk5"; //마커 다운로드 주소
     private Uri downloadUri = Uri.parse(DOWNLOAD_FILE);
     private DownloadManager downloadManager;
     private long id =0;
@@ -56,8 +56,9 @@ public class PopupHelpActivity extends Activity { //RecycleFragment 에 있는 �
 
     public void downloadImage(){
         DownloadManager.Request request = new DownloadManager.Request(downloadUri);
-        request.setTitle("15센치 마커");
-        request.setDescription("길이 측정을 위한 이미지");
+        request.setTitle("길이 측정을 위한 이미지");
+        request.setDescription("가구에 부착");
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         id = downloadManager.enqueue(request);
     }
 
@@ -81,7 +82,6 @@ public class PopupHelpActivity extends Activity { //RecycleFragment 에 있는 �
         public void onReceive(Context context, Intent intent) {
             DownloadManager.Query query = new DownloadManager.Query();
             query.setFilterById(id);
-
             Cursor cursor = downloadManager.query(query);
             if(cursor.moveToFirst()){
                 int columnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);

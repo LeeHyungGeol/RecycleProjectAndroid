@@ -36,7 +36,8 @@
             android:alpha="0.87"
             android:text="품목 확인 방법"
             android:textColor="#000"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"
@@ -57,13 +58,14 @@
             android:alpha="0.87"
             android:text="길이측정 방법"
             android:textColor="#000"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/imageDownladBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#3589A3"
+            android:background=" #608DD6"
             android:padding="5dp"
             android:text="측정을 위한 이미지 다운로드"
             android:textColor="#FFFFFF" />
@@ -81,8 +83,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#4A4747"
-            android:text="- 다운받은 이미지를 출력 후 \n  원하는 품목에 부착" />
+            android:text="- 다운받은 이미지를 출력 후  원하는 품목에\n  부착"
+            android:textColor="#4A4747" />
 
         <TextView
             android:layout_width="match_parent"
@@ -103,7 +105,8 @@
             android:alpha="0.87"
             android:text="올바른 분리배출 방법"
             android:textColor="#000"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="match_parent"

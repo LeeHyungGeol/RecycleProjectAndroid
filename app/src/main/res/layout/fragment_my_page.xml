@@ -22,9 +22,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="#4896CA"
-        android:padding="10dp"
-        android:orientation="vertical">
+        android:background="#608DD6"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/myNickNameText"
@@ -40,8 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="위치: "
             android:gravity="center_vertical"
+            android:text="위치: "
             android:textColor="#FFFFFF" />
 
         <TextView
@@ -49,8 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="포인트: "
             android:gravity="center_vertical"
+            android:text="포인트: "
             android:textColor="#FFFFFF" />
 
     </LinearLayout>

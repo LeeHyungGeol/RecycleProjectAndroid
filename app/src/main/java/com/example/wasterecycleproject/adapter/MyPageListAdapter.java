@@ -70,17 +70,13 @@ public class MyPageListAdapter extends BaseAdapter{
                 else if(pos==1){ //게시글 목록 클릭
                     context.startActivity(new Intent(context, UserCommunityActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                 }
-                else if(pos==2){ //위치 설정 클릭
-                    Toast.makeText(context,"위치설정 클릭",Toast.LENGTH_SHORT).show();
-
-                }
-                else if(pos==3){ //로그아웃 버튼 클릭
-                    Toast.makeText(context,"로그아웃되었습니다",Toast.LENGTH_SHORT).show();
+                else if(pos==2){ //로그아웃 버튼 클릭
                     mRestApiUtil = new RestApiUtil();
                     mRestApiUtil.getApi().logout("Token " + UserToken.getToken()).enqueue(new Callback<LogoutResponseDTO>() {
                         @Override
                         public void onResponse(Call<LogoutResponseDTO> call, Response<LogoutResponseDTO> response) {
                             if(response.isSuccessful()){
+                                Toast.makeText(context,"로그아웃되었습니다",Toast.LENGTH_SHORT).show();
                                 context.startActivity(new Intent(context, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                             }
                             else{

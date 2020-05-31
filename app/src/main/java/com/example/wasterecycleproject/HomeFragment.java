@@ -33,12 +33,9 @@ import com.example.wasterecycleproject.adapter.RecycleExpandableListAdapter;
 import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.GpsTracker;
-import com.example.wasterecycleproject.model.LocationInformation;
 import com.example.wasterecycleproject.model.LocationUpdateDTO;
 import com.example.wasterecycleproject.model.LocationUpdateResponseDTO;
 import com.example.wasterecycleproject.model.LocationWatseResponseDTO;
-import com.example.wasterecycleproject.model.SearchWordDTO;
-import com.example.wasterecycleproject.model.SearchWordResponseDTO;
 import com.example.wasterecycleproject.util.RestApiUtil;
 import com.example.wasterecycleproject.util.UserToken;
 
@@ -62,7 +59,6 @@ public class HomeFragment extends Fragment {
     private List<String> listGroup;
     private HashMap<String, List<String>> listItem;
     private RecycleExpandableListAdapter recycleExpandableListAdapter;
-    private LocationInformation locationInformation;
     private View view;
     private ImageButton voiceBtn;
     private ImageButton searchBtn;
@@ -134,9 +130,10 @@ public class HomeFragment extends Fragment {
         searchBtn = view.findViewById(R.id.searchBtn);
         mRestApiUtil = new RestApiUtil();
         searchText = view.findViewById(R.id.searchText);
+        searchText.clearFocus();
+        searchText.setText("");
         mRestApiUtil = new RestApiUtil();
         locationBtn = view.findViewById(R.id.locationBtn);
-        locationInformation = new LocationInformation();
         listGroup.add("생활쓰레기");
         listGroup.add("음식물쓰레기");
         listGroup.add("재활용품");
@@ -181,7 +178,7 @@ public class HomeFragment extends Fragment {
                         address=add;
                         Log.d("위치",address);
                         LocationUpdateDTO locationUpdateDTO = new LocationUpdateDTO();
-                        locationUpdateDTO.setDong("화양동");
+                        locationUpdateDTO.setDong(address); //화양동, 구의2동 등등 set
                         mRestApiUtil.getApi().location_update("Token " + UserToken.getToken(),locationUpdateDTO).enqueue(new Callback<LocationUpdateResponseDTO>() {
                             @Override
                             public void onResponse(Call<LocationUpdateResponseDTO> call, Response<LocationUpdateResponseDTO> response) {
@@ -217,7 +214,6 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<LocationWatseResponseDTO> call, Response<LocationWatseResponseDTO> response) {
                 if(response.isSuccessful()){
                     LocationWatseResponseDTO locationWatseResponseDTO = response.body();
-                    locationInformation= locationWatseResponseDTO.getLocation_waste_information();
                     String[] array;
                     List<String> houseWasteList = new ArrayList<>();
                     array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_day(),

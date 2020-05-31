@@ -29,13 +29,12 @@ public class MyPageFragment extends Fragment {
 
     private ListView listView;
     private MyPageListAdapter adapter;
-    private String[] title = {"나의 쪽지 보관함","나의 게시글 목록","위치설정 하기", "로그아웃"};
+    private String[] title = {"나의 쪽지 보관함","나의 게시글 목록","로그아웃"};
     private View view;
     private RestApiUtil mRestApiUtil;
     private TextView idText;
     private TextView locationText;
     private TextView pointText;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

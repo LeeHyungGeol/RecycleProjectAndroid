@@ -23,10 +23,17 @@
             android:textSize="24sp" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/allCommunityRecyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="370dp" />
+        android:id="@+id/swipe_layout"
+        android:layout_height="370dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/allCommunityRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <Button
         android:id="@+id/upLoadBtn"

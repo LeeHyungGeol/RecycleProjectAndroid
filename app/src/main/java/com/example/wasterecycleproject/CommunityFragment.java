@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.util.Log;
@@ -42,6 +43,7 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
     private boolean isLoading;
     private ArrayList<Community> communityList;
     private ArrayList<Community> community;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,12 +66,24 @@ public class CommunityFragment extends Fragment { //게시글 리스트 화면
         recyclerView = view.findViewById(R.id.allCommunityRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRestApiUtil = new RestApiUtil();
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_layout);
         firstData();
         initAdapter();
         initScrollListener();
     }
 
     private void addListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                communityList.clear();
+                community.clear();
+                firstData();
+                initAdapter();
+                initScrollListener();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
         upLoadBtn.setOnClickListener(new Button.OnClickListener(){ //음성 버튼 리스너
 
             @Override

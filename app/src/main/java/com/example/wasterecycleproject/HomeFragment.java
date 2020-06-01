@@ -214,39 +214,69 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<LocationWatseResponseDTO> call, Response<LocationWatseResponseDTO> response) {
                 if(response.isSuccessful()){
                     LocationWatseResponseDTO locationWatseResponseDTO = response.body();
-                    String[] array;
-                    List<String> houseWasteList = new ArrayList<>();
-                    array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_day(),
-                            "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_method(),
-                            "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_start(),
-                            "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_end()}; //생활쓰레기 리스트를 누르면 나오는 내용
-                    for (String item : array) {
-                        houseWasteList.add(item);
+
+                    try{
+                        String[] array;
+                        List<String> houseWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_day(),
+                                "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_method(),
+                                "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_start(),
+                                "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getHouse_end()}; //생활쓰레기 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            houseWasteList.add(item);
+                        }
+
+                        List<String> foodWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getFood_day(),
+                                "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getFood_method(),
+                                "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getFood_start(),
+                                "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getFood_end()}; //음식물쓰레기 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            foodWasteList.add(item);
+                        }
+                        List<String> recylceWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_day(),
+                                "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_method(),
+                                "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_start(),
+                                "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_end()}; //재활용품 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            recylceWasteList.add(item);
+                        }
+
+                        listItem.put(listGroup.get(0), houseWasteList);
+                        listItem.put(listGroup.get(1), foodWasteList);
+                        listItem.put(listGroup.get(2), recylceWasteList);
+
+                        recycleExpandableListAdapter = new RecycleExpandableListAdapter(getActivity(), listGroup, listItem);
+                        expandableListView.setAdapter(recycleExpandableListAdapter);
+                    }catch(Exception e){
+                        e.printStackTrace();
+                        String[] array;
+                        List<String> houseWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: ", "배출방법: ", "배출시작시각: ", "배출종료시각: "}; //생활쓰레기 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            houseWasteList.add(item);
+                        }
+
+                        List<String> foodWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: ", "배출방법: ", "배출시작시각: ", "배출종료시각: "}; //음식물쓰레기 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            foodWasteList.add(item);
+                        }
+                        List<String> recylceWasteList = new ArrayList<>();
+                        array = new String[]{"배출요일: ", "배출방법: ", "배출시작시각: ", "배출종료시각: "}; //재활용품 리스트를 누르면 나오는 내용
+                        for (String item : array) {
+                            recylceWasteList.add(item);
+                        }
+
+                        listItem.put(listGroup.get(0), houseWasteList);
+                        listItem.put(listGroup.get(1), foodWasteList);
+                        listItem.put(listGroup.get(2), recylceWasteList);
+
+                        recycleExpandableListAdapter = new RecycleExpandableListAdapter(getActivity(), listGroup, listItem);
+                        expandableListView.setAdapter(recycleExpandableListAdapter);
                     }
 
-                    List<String> foodWasteList = new ArrayList<>();
-                    array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getFood_day(),
-                            "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getFood_method(),
-                            "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getFood_start(),
-                            "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getFood_end()}; //음식물쓰레기 리스트를 누르면 나오는 내용
-                    for (String item : array) {
-                        foodWasteList.add(item);
-                    }
-                    List<String> recylceWasteList = new ArrayList<>();
-                    array = new String[]{"배출요일: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_day(),
-                            "배출방법: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_method(),
-                            "배출시작시각: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_start(),
-                            "배출종료시각: "+locationWatseResponseDTO.getLocation_waste_information().getRecycle_end()}; //재활용품 리스트를 누르면 나오는 내용
-                    for (String item : array) {
-                        recylceWasteList.add(item);
-                    }
-
-                    listItem.put(listGroup.get(0), houseWasteList);
-                    listItem.put(listGroup.get(1), foodWasteList);
-                    listItem.put(listGroup.get(2), recylceWasteList);
-
-                    recycleExpandableListAdapter = new RecycleExpandableListAdapter(getActivity(), listGroup, listItem);
-                    expandableListView.setAdapter(recycleExpandableListAdapter);
                     progressOFF();
                 }
                 else{

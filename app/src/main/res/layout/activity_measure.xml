@@ -39,14 +39,14 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_slider_mainActivity"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             app:cardCornerRadius="8dp">
 
             <com.smarteist.autoimageslider.SliderView
                 android:id="@+id/imageSlider"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:sliderAnimationDuration="600"
                 app:sliderAutoCycleDirection="back_and_forth"
@@ -54,9 +54,9 @@
                 app:sliderIndicatorGravity="center_horizontal|bottom"
                 app:sliderIndicatorMargin="15dp"
                 app:sliderIndicatorOrientation="horizontal"
-                app:sliderIndicatorPadding="2dp"
-                app:sliderIndicatorRadius="3px"
-                app:sliderIndicatorSelectedColor="#5A5A5A"
+                app:sliderIndicatorPadding="3dp"
+                app:sliderIndicatorRadius="5px"
+                app:sliderIndicatorSelectedColor="#000000"
                 app:sliderIndicatorUnselectedColor="#FFF"
                 app:sliderScrollTimeInSec="1" />
 
@@ -84,21 +84,20 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="60dp"
         android:orientation="vertical">
 
         <AutoCompleteTextView
             android:id="@+id/MeasureAutoCompleteTextView"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:background="@drawable/custom_button"
-            android:completionHint="검색어를 입력하세요."
             android:completionThreshold="1"
             android:gravity="center_vertical"
-            android:hint="폐기물 명을 검색해보세요!!"
-            android:textColor="#03A9F4"
-            android:textColorHint="#03A9F4"
+            android:hint="폐기물 명을 검색해주세요"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -109,6 +108,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <TextView
@@ -140,7 +140,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:background="@drawable/custom_button"
         android:text="처분 수수료 확인"
-        android:textColor="#03A9F4"/>
+        android:background="@drawable/main_button_background"
+        android:textColor="#FFFFFF"
+        />
 </LinearLayout>

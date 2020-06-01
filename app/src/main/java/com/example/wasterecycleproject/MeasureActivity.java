@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -66,15 +68,11 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
     private AutoCompleteTextView autoCompleteTextView;
     private ListForSearchWaste listForSearchWaste;
     private List<String> list;
-
     //가로, 세로 길이
     private float width;
     private float height;
     private TextView tv_width;
     private TextView tv_height;
-    //사진 위치
-    private int slidePosition;
-
     //sliderView
     private SliderView sliderView;
     private MeasureSliderAdapter adapter;
@@ -95,9 +93,8 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
         setActionBar();
         init();
         //
-        addListener();
-
         MeasureLength();
+        addListener();
     }
 
 
@@ -127,21 +124,16 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
         //가로 세로 길이 textView
         tv_height = findViewById(R.id.heightTextView);
         tv_width = findViewById(R.id.widthTextView);
-        tv_width.setText("가로 길이를 표시할 수 없습니다.");
-        tv_height.setText("세로 길이를 표시할 수 없습니다.");
 
         //sliderView
         sliderView = findViewById(R.id.imageSlider);
 
         adapter = new MeasureSliderAdapter(this);
-        adapter.addItem(new SliderItem("Demo_Image_1", imgPath));
         sliderView.setSliderAdapter(adapter);
 
         sliderView.setIndicatorAnimation(IndicatorAnimations.THIN_WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
         sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
         sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
-        sliderView.setIndicatorSelectedColor(Color.WHITE);
-        sliderView.setIndicatorUnselectedColor(Color.GRAY);
         sliderView.setScrollTimeInSec(6000); //slide 하나 자동으로 넘어가는 시간
         sliderView.setAutoCycle(true);
         sliderView.startAutoCycle();
@@ -153,23 +145,34 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
 
     public void addListener() {
         //sliderView
+        sliderView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View v, DragEvent event) {
+                Toast.makeText(MeasureActivity.this,"드래그",Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
         sliderView.setOnIndicatorClickListener(new DrawController.ClickListener() {
             @Override
             public void onIndicatorClicked(int position) {
                 sliderView.setCurrentPagePosition(position);
-                slidePosition = position - 1;
                 try {
-                    width = measureArrayList.get(position - 1).getWidth();
-                    height = measureArrayList.get(position - 1).getHeight();
-                    tv_width.setText("가로 길이 : " + (int)measureArrayList.get(position - 1).getWidth() + "cm");
-                    tv_height.setText("세로 길이 : " + (int)measureArrayList.get(position - 1).getHeight() + "cm");
+                    width = measureArrayList.get(position).getWidth();
+                    height = measureArrayList.get(position).getHeight();
+                    Log.d("width", String.valueOf(width));
+                    Log.d("height",String.valueOf(height));
+                    String widthText = "가로 길이: "+String.format("%.1f",measureArrayList.get(position).getWidth())+"cm";
+                    String heightText = "세로 길이: "+String.format("%.1f",measureArrayList.get(position).getHeight())+"cm";
+                    tv_width.setText(widthText);
+                    tv_height.setText(heightText);
                 }
                 catch (Exception e) {
                     Log.d("Exception : ", String.valueOf(e));
                     Log.d("가로 길이", String.valueOf(width));
                     Log.d("세로 길이", String.valueOf(height));
-                    tv_width.setText("가로 길이를 표시할 수 없습니다.");
-                    tv_height.setText("세로 길이를 표시할 수 없습니다.");
+                    tv_width.setText("가로 길이를 확인할 수 없습니다");
+                    tv_height.setText("세로 길이를 확인할 수 없습니다");
                 }
             }
         });
@@ -192,11 +195,6 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
             measureFeeIntent.putExtra("title","폐기물 수수료 측정");
             startActivity(measureFeeIntent);
         }
-        else if( slidePosition == -1 ) {
-            measureFeeIntent.putExtra("data", "올바른 길이 화면으로 이동해주세요.");
-            measureFeeIntent.putExtra("title","폐기물 수수료 측정");
-            startActivity(measureFeeIntent);
-        }
         else {
             measure_fee(searchWord);
         }
@@ -204,7 +202,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
     }
 
     public void MeasureLength() {
-        progressON("길이 측정 중입니다...");
+        progressON("길이 측정 중입니다");
 
         String token = "Token " + AppManager.getInstance().getUser().getToken();
         Retrofit mRetrofit = RestApiUtil.getRetrofitClient(this);
@@ -228,8 +226,13 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                     System.out.println(measureArrayList.size());
 
                     if (measureArrayList.get(0).getCode() == 100) {
+
+                        String widthText = "가로 길이: "+String.format("%.1f",measureArrayList.get(0).getWidth())+"cm";
+                        String heightText = "세로 길이: "+String.format("%.1f",measureArrayList.get(0).getHeight())+"cm";
+                        tv_height.setText(heightText);
+                        tv_width.setText(widthText);
                         progressOFF();
-                        confirmDialog.setMessage("길이 측정 완료!!\n올바른 길이 화면으로 이동해주세요!!");
+                        confirmDialog.setMessage("길이 측정 완료");
                         confirmDialog.show();
 
                         for (int i = 0; i < measureArrayList.size(); i++) {
@@ -253,7 +256,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                 } else {
                     progressOFF();
                     Log.d("길이 측정", "실패");
-                    confirmDialog.setMessage("길이 측정 실패..."); //서버에 이미지 전송 실패
+                    confirmDialog.setMessage("길이 측정 실패"); //서버에 이미지 전송 실패
                     confirmDialog.show();
                 }
 
@@ -264,7 +267,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                 progressOFF();
                 System.out.println(t.getMessage());
                 Log.d("이미지 업로드", "실패");
-                confirmDialog.setMessage("이미지 업로드 실패..."); //서버에 이미지 전송 실패
+                confirmDialog.setMessage("이미지 업로드 실패"); //서버에 이미지 전송 실패
                 confirmDialog.show();
             }
         });
@@ -273,7 +276,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
 
     public void measure_fee(String searchWord) {
 
-        progressON("수수료 측정 중입니다...");
+        progressON("수수료 측정 중입니다");
         String token = "Token " + AppManager.getInstance().getUser().getToken();
         measureFeeDTO = new MeasureFeeDTO(searchWord, height, width);
 
@@ -288,7 +291,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                     MeasureFeeResponseDTO measureFeeResponseDTO = response.body();
                     MeasureFee measureFee = measureFeeResponseDTO.getFee();
                     if(measureFee.getCode()==100) {
-                        measureFeeIntent.putExtra("data",measureFee.getItem_fee());
+                        measureFeeIntent.putExtra("data","수수료는 "+measureFee.getItem_fee()+"입니다");
                     }
                     else if(measureFee.getCode() == 101) {
                         measureFeeIntent.putExtra("data",measureFee.getMsg());

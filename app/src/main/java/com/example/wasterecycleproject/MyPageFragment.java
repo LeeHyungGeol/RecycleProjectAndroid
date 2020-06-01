@@ -69,35 +69,33 @@ public class MyPageFragment extends Fragment {
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
                 if(response.isSuccessful()){
                     UserProfileResponse userProfileResponse = response.body();
-                    String id = userProfileResponse.getMy_page().getUser_id();
-                    String location = userProfileResponse.getMy_page().getLocation_name();
-                    int point = userProfileResponse.getMy_page().getPoint();
-                    Log.d("id",id);
-                    Log.d("location",location);
-                    Log.d("point", String.valueOf(point));
                     try{
+                        String id = userProfileResponse.getMy_page().getUser_id();
                         idText.setText("아이디: "+id);
                     }
                     catch (Exception e){
                         e.printStackTrace();
                     }
                     try{
-                        locationText.setText("위치: "+location);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    try{
+                        int point = userProfileResponse.getMy_page().getPoint();
                         pointText.setText("포인트: "+point);
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    progressOFF();
+                    try{
+                        String location = userProfileResponse.getMy_page().getLocation_name();
+                        locationText.setText("위치: "+location);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
 
                 }
                 else{
                     Log.d("MyPageFragment","reponse 실패");
 
                 }
+                progressOFF();
             }
 
             @Override

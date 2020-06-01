@@ -39,7 +39,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 public interface RestApi {
-    String BASE_URL = "http://1eb3a2aa7949.ngrok.io/";
+    String BASE_URL = "http://b144605d8c0f.ngrok.io/";
 
     @POST("userApp/auth/register/")
     Call<RegisterResponseDTO> register(@Body User user);

@@ -60,28 +60,6 @@ public class MeasureSliderAdapter extends SliderViewAdapter<MeasureSliderAdapter
 
         ImageManager.getInstance().GlideWithView(viewHolder.itemView, viewHolder.imageViewBackground, sliderItem.getImageUrl());
 
-//        RequestOptions requestOptions = new RequestOptions();
-//        requestOptions = requestOptions
-//                .placeholder(R.drawable.logo)
-//                .error(R.drawable.logo);
-//
-//        Glide.with(viewHolder.itemView)
-//                .load(sliderItem.getImageUrl())
-//                .apply(requestOptions)
-//                .into(viewHolder.imageViewBackground);
-
-        //
-//        Glide.with(viewHolder.itemView)
-//                .load(sliderItem.getImageUrl())    //.fitCenter()
-//                .into(viewHolder.imageViewBackground);
-        //
-
-//        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
     }
 

@@ -180,10 +180,6 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
                 System.out.println("response.isSuccessful : " + response.isSuccessful());
                 if(response.isSuccessful()) {
                     progressOFF();
-                    RegisterBoardResponseDTO registerBoardResponseDTO = response.body();
-                    Community community = registerBoardResponseDTO.getCommunity();
-                    confirmDialog.setMessage("게시글 등록 성공");
-                    confirmDialog.show();
                     setResult(Activity.RESULT_OK);
                     finish();
                 }

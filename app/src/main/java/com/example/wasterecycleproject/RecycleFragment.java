@@ -49,22 +49,10 @@ public class RecycleFragment extends Fragment {
     private ConfirmDialog confirmDialog;
     public File imgFile;
     public Image image;
-
-    //Activity 실행 경우 4가지
     private Intent intent;
     private final static int DETECTION_CATEGORY = 1;
     private final static int MEASURE_LEGTH = 2;
-    private final static int DETECTION_CLEAN_POPUP = 3;
-    private final static int MEASURE_FEE_POPUP = 4;
-
-    //올바른 배출 확인
-    private DetectionClean detectionClean;
-    private String detectionCleanMsg;
-    private int value;
-    private int responseCode;
-    private String user_name;
-    private String description;
-
+    private DetectionClean detectionClean; //올바른 분리배출
     private View view;
     private ImageView imageView; //정중앙 이미지 뷰
     private Button categoryChkBtn;  //품목확인 버튼
@@ -85,6 +73,8 @@ public class RecycleFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_recycle, container, false);
+        Intent intent=new Intent(getActivity(),PopupHelpActivity.class);
+        startActivity(intent);
         init();
         addListener();
         return view;
@@ -93,8 +83,8 @@ public class RecycleFragment extends Fragment {
 
     public void init() {
         confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext()); //confirmDialog 초기화
-
         imageView = view.findViewById(R.id.ImageView);
+        imageView.setImageResource(R.drawable.ic_camera_icon);
         categoryChkBtn = view.findViewById(R.id.categoryChkBtn);
         dimensionChkBtn = view.findViewById(R.id.dimensionChkBtn);
         propRecycleBtn = view.findViewById(R.id.propRecycleBtn);
@@ -253,15 +243,11 @@ public class RecycleFragment extends Fragment {
     }
 
     public void checkDetectionCleanCase() {   // 올바른 분리 배출 확인
-        System.out.println("resposeCode : " +  detectionClean.getCode());
         switch ( detectionClean.getCode()) {
             case 100:
                 Log.d("올바른 분리 배출 O", detectionClean.getMsg());
-                intent.putExtra("data",detectionClean.getDescription() + "입니다!!" + "\n포인트를 획득하셨습니다!!\n현재 " + detectionClean.getUser_name()
-                        + "님의 포인트는 " + detectionClean.getValue() + "점 입니다.");
+                intent.putExtra("data",detectionClean.getDescription() + "입니다"+detectionClean.getValue()+"포인트를 획득하셨습니다");
                 break;
-            case 101:
-            case 102:
             case 103:
                 Log.d("올바른 분리 배출 X", detectionClean.getMsg());
                 intent.putExtra("data",detectionClean.getMsg());

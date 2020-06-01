@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -25,26 +26,47 @@ import android.widget.Toast;
 
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
+import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.manager.ImageManager;
+import com.example.wasterecycleproject.model.Community;
+import com.example.wasterecycleproject.model.RegisterBoardResponseDTO;
+import com.example.wasterecycleproject.util.ConfirmDialog;
+import com.example.wasterecycleproject.util.RestApi;
+import com.example.wasterecycleproject.util.RestApiUtil;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글 작성시 화면
-
-    private EditText communityContext;
+    private ConfirmDialog confirmDialog;
+    private File imgFile;
+    private EditText communityContext; // 게시글 내용
     private TextView contextLimit;
-    private ImageView imageView;
-    private List<Image> images;
+    private ImageView imageView;       // 게시글 이미지
+    private Image image;
     private LayoutInflater inflater;
-    private Button boardBtn;
+    private Button boardBtn;           //게시글 등록 버튼
     private LinearLayout gallery; //이미지 보여주기 위한 좌우스크롤 레이아웃
     private ImagePicker imagePicker;
-    private int imageCnt;
-    private ArrayList<Uri> fileUris;
+    private EditText et_title;   //게시글 제목
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppManager.getInstance().setContext(this);
+        AppManager.getInstance().setResources(getResources());
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_register_board);
         init();
@@ -56,22 +78,13 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
         super.onActivityResult(requestCode, resultCode, data);
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             // Get a list of picked images
-
-            images = ImagePicker.getImages(data);
-            imageCnt+= images.size();
-            if(imageCnt<=5) //이미지 최대 5개 등록 제한을 위함
-            {
-                imagePick(images, data.getClipData());
-            }
-            else
-            {
-                Toast.makeText(this, "이미지는 최대 5개까지 등록할 수 있습니다.", Toast.LENGTH_SHORT).show();
-                imageCnt-= images.size();
-            }
+            image = ImagePicker.getFirstImageOrNull(data);
+            imagePick(image);
         }
     }
 
-    private void init(){
+    public void init(){
+        confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext());
 
         imageView= findViewById(R.id.imageView);
         imagePicker = ImagePicker.create(this)
@@ -79,13 +92,12 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
         gallery = findViewById(R.id.gallery);
         inflater= LayoutInflater.from(this); //동적 이미지 스크롤을 위한 inflater
         communityContext = findViewById(R.id.communityContext);
-        contextLimit=findViewById(R.id.contextLimit);
-        boardBtn=findViewById(R.id.boardBtn);
-        imageCnt=0;
-        fileUris = new ArrayList<>();
+        contextLimit = findViewById(R.id.contextLimit);
+        boardBtn = findViewById(R.id.boardBtn);
+        et_title = findViewById(R.id.editText);
     }
 
-    private void addListener() {
+    public void addListener() {
         imageView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -118,25 +130,90 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
 
             @Override
             public void onClick(View v) {
-
+                try {
+                    if(et_title.getText().toString().length() == 0 || communityContext.getText().toString().length() == 0) {
+                        confirmDialog.setMessage("제목 또는 게시글 내용을 입력해주세요.");
+                        confirmDialog.show();
+                        return;
+                    }
+                    register_board();
+                }
+                catch (Exception e) {
+                    progressOFF();
+                    confirmDialog.setMessage("사진을 입력해주세요.");
+                    confirmDialog.show();
+                }
             }
         });
     }
 
-    private void imagePick(List<Image> images, ClipData clipData){ //이미지 선택 메소드
-
-        for(int i=0;i<images.size();i++){
-            View view = inflater.inflate(R.layout.gallery_item,gallery,false);
-            ImageView itemView = view.findViewById(R.id.itemImageView);
-            File imgFile = new File(images.get(i).getPath());
-            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            itemView.setImageBitmap(bitmap);
-            gallery.addView(view); //이미지 레이아웃에 동적 추가
-//            ClipData.Item clipItem = clipData.getItemAt(i);
-//            Uri uri = clipItem.getUri();
-//            fileUris.add(uri);
-        }
+    public void imagePick(Image image){ //이미지 선택 메소드
+        View view = inflater.inflate(R.layout.gallery_item, gallery, false);
+        ImageView itemView = view.findViewById(R.id.itemImageView);
+        imgFile = new File(image.getPath());
+        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+        itemView.setImageBitmap(bitmap);
+        gallery.addView(view); //이미지 레이아웃에 동적 추가
 
     }
+
+    public void register_board() {
+        progressON("게시글 업로드 중입니다...");
+        String token = "Token " + AppManager.getInstance().getUser().getToken();
+        Retrofit mRetrofit = RestApiUtil.getRetrofitClient(this);
+        RestApi restApi = mRetrofit.create(RestApi.class);
+
+        Map<String, RequestBody> boardMap = new HashMap<>();
+
+        RequestBody requestTitle = RequestBody.create(MediaType.parse("text/plain"), et_title.getText().toString());
+        RequestBody requestContent = RequestBody.create(MediaType.parse("text/plain"), communityContext.getText().toString());
+        RequestBody requestImage = RequestBody.create(MediaType.parse("image/*"), imgFile);
+
+        boardMap.put("title", requestTitle);
+        boardMap.put("content", requestContent);
+        boardMap.put("image\"; filename=\"" + imgFile.getName(), requestImage);
+
+        Call<RegisterBoardResponseDTO> call = restApi.register_board(token, boardMap);
+        call.enqueue(new Callback<RegisterBoardResponseDTO>() {
+            @Override
+            public void onResponse(Call<RegisterBoardResponseDTO> call, Response<RegisterBoardResponseDTO> response) {
+                System.out.println("response.isSuccessful : " + response.isSuccessful());
+                if(response.isSuccessful()) {
+                    progressOFF();
+                    RegisterBoardResponseDTO registerBoardResponseDTO = response.body();
+                    Community community = registerBoardResponseDTO.getCommunity();
+                    confirmDialog.setMessage("게시글 등록 성공");
+                    confirmDialog.show();
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                }
+                else {
+                    progressOFF();
+                    confirmDialog.setMessage("게시글 등록 실패");
+                    confirmDialog.show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RegisterBoardResponseDTO> call, Throwable t) {
+                progressOFF();
+                confirmDialog.setMessage("게시글 등록 실패");
+                confirmDialog.show();
+            }
+        });
+
+
+    }
+
+    public void progressON(String message) {
+        ImageManager.getInstance().progressON((Activity) AppManager.getInstance().getContext(), message);
+    }
+    public void progressOFF() {
+        ImageManager.getInstance().progressOFF();
+    }
+
+
+
+
 
 }

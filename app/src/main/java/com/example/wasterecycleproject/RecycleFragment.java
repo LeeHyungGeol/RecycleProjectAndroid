@@ -23,14 +23,25 @@ import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.model.Image;
 import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.manager.ImageManager;
-import com.example.wasterecycleproject.model.Detection_List;
+import com.example.wasterecycleproject.model.DetectionClean;
+import com.example.wasterecycleproject.model.DetectionCleanResponseDTO;
+import com.example.wasterecycleproject.model.MeasureLengthResponseDTO;
 import com.example.wasterecycleproject.util.ConfirmDialog;
+import com.example.wasterecycleproject.util.RestApi;
+import com.example.wasterecycleproject.util.RestApiUtil;
 
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 
 public class RecycleFragment extends Fragment {
@@ -38,7 +49,21 @@ public class RecycleFragment extends Fragment {
     private ConfirmDialog confirmDialog;
     public File imgFile;
     public Image image;
-    private ArrayList<Detection_List> detection_list;
+
+    //Activity 실행 경우 4가지
+    private Intent intent;
+    private final static int DETECTION_CATEGORY = 1;
+    private final static int MEASURE_LEGTH = 2;
+    private final static int DETECTION_CLEAN_POPUP = 3;
+    private final static int MEASURE_FEE_POPUP = 4;
+
+    //올바른 배출 확인
+    private DetectionClean detectionClean;
+    private String detectionCleanMsg;
+    private int value;
+    private int responseCode;
+    private String user_name;
+    private String description;
 
     private View view;
     private ImageView imageView; //정중앙 이미지 뷰
@@ -62,14 +87,13 @@ public class RecycleFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_recycle, container, false);
         init();
         addListener();
-        Intent intent=new Intent(getActivity(),PopupHelpActivity.class);
-        startActivity(intent);
         return view;
     }
 
 
     public void init() {
-        detection_list = new ArrayList<Detection_List>();
+        confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext()); //confirmDialog 초기화
+
         imageView = view.findViewById(R.id.ImageView);
         categoryChkBtn = view.findViewById(R.id.categoryChkBtn);
         dimensionChkBtn = view.findViewById(R.id.dimensionChkBtn);
@@ -91,19 +115,8 @@ public class RecycleFragment extends Fragment {
         categoryChkBtn.setOnClickListener(new Button.OnClickListener(){
 
             @Override
-            public void onClick(View v) { //품목 측정버튼 리스너
-
-                Intent intent = new Intent(AppManager.getInstance().getContext(), RecycleConfiguartionActivity.class);
-                try {
-                    Log.d("imgFilePath : ", imgFile.getAbsolutePath());
-                    intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
-                    startActivity(intent);
-
-                }catch (Exception e){
-
-                    Toast.makeText(getActivity(),"사진을 입력해주세요",Toast.LENGTH_SHORT).show();
-                }
-
+            public void onClick(View v) { //품목 측정 버튼 리스너
+                checkCase(DETECTION_CATEGORY);
             }
         });
 
@@ -111,44 +124,22 @@ public class RecycleFragment extends Fragment {
 
             @Override
             public void onClick(View v) { //규격 측정 버튼 리스너
-
-                try {
-                    Intent intent=new Intent(AppManager.getInstance().getContext(), MeasureActivity.class);
-                    Log.d("imgFilePath : ", imgFile.getAbsolutePath());
-                    intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
-                    startActivity(intent);
-                }catch (Exception e){
-                    Toast.makeText(getActivity(),"사진을 입력해주세요",Toast.LENGTH_SHORT).show();
-                }
+                checkCase(MEASURE_LEGTH);
             }
         });
 
-        propRecycleBtn.setOnClickListener(new Button.OnClickListener(){ //올바른 분리배출 버튼 리스너
+        propRecycleBtn.setOnClickListener(new Button.OnClickListener(){
 
             @Override
-            public void onClick(View v) {
-                boolean status =true; //올바른 배출인지 아닌지 이거는 알아서 입맛대로
-                if(status){ //올바른 분리배출일때
-                    Intent intent=new Intent(getActivity(),PopupProperRecycleActivity.class);
-                    intent.putExtra("title","올바른 분리배출 확인");
-                    intent.putExtra("data","올바른 분리배출입니다.");
-                    startActivity(intent);
-                }
-                else //올바른 배출이 아닐때
-                {
-
-                    Intent intent=new Intent(getActivity(),PopupProperRecycleActivity.class);
-                    intent.putExtra("title","올바른 분리배출 확인");
-                    intent.putExtra("data","올바른 분리배출이 아닙니다.");
-                    startActivity(intent);
-                }
+            public void onClick(View v) { //올바른 분리 배출 버튼 리스너
+                startDetectionClean();
             }
         });
 
         helpBtn.setOnClickListener(new Button.OnClickListener(){ //도움말 리스너
 
             @Override
-            public void onClick(View v) { //도움말 클릭시
+            public void onClick(View v) {
                 Intent intent=new Intent(getActivity(),PopupHelpActivity.class);
                 startActivity(intent);
 
@@ -173,7 +164,110 @@ public class RecycleFragment extends Fragment {
         imageView.setImageBitmap(bitmap);
     }
 
+    public void checkCase(int activityCase) {
 
+        switch(activityCase) {
+            case DETECTION_CATEGORY: //품목 측정
+                intent = new Intent(AppManager.getInstance().getContext(), RecycleConfiguartionActivity.class);
+                break;
+            case MEASURE_LEGTH: //규격 측정
+                intent= new Intent(AppManager.getInstance().getContext(), MeasureActivity.class);
+                break;
+        }
+        try {
+            Log.d("imgFilePath : ", imgFile.getAbsolutePath());
+            intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
+            startActivity(intent);
+        }
+        catch (Exception e) {
+            confirmDialog.setMessage("사진을 입력해주세요.");
+            confirmDialog.show();
+        }
+    }
+
+    public void startDetectionClean() {
+        intent = new Intent(AppManager.getInstance().getContext(), PopupProperRecycleActivity.class);
+        try {
+            Log.d("imgFilePath : ", imgFile.getAbsolutePath());
+            intent.putExtra("imgFilePath",imgFile.getAbsolutePath());
+            detection_clean();
+        }
+        catch (Exception e) {
+            confirmDialog.setMessage("사진을 입력해주세요.");
+            confirmDialog.show();
+        }
+    }
+
+    public void detection_clean() {
+        try {
+            String token = "Token " + AppManager.getInstance().getUser().getToken();
+            Retrofit mRetrofit = RestApiUtil.getRetrofitClient(AppManager.getInstance().getContext());
+            RestApi restApi = mRetrofit.create(RestApi.class);
+
+            RequestBody imgFileReqBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+            MultipartBody.Part image = MultipartBody.Part.createFormData("image", imgFile.getName(), imgFileReqBody);
+
+            progressON("올바른 분리 배출 분석 중입니다...");
+            Call<DetectionCleanResponseDTO> call = restApi.detection_clean(token, image);
+            call.enqueue(new Callback<DetectionCleanResponseDTO>() {
+                @Override
+                public void onResponse(Call<DetectionCleanResponseDTO> call, Response<DetectionCleanResponseDTO> response) {
+
+                    System.out.println("response.isSuccessful : " + response.isSuccessful());
+                    if (response.isSuccessful()) {
+                        DetectionCleanResponseDTO detectionCleanResponseDTO = response.body();
+                        detectionClean = detectionCleanResponseDTO.getClean_detection();
+                        checkDetectionCleanCase();
+                        progressOFF();
+                    }
+                    else {
+                        Log.d("올바른 분리 배출 X", "품목 분류에 실패했습니다.");
+                        System.out.println("올바른 분리 배출 X : 품목 분류에 실패했습니다.");
+
+                        progressOFF();
+                        intent.putExtra("data", "품목 분류에 실패했습니다.");
+
+                    }
+                    intent.putExtra("title","올바른 분리배출 확인");
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(Call<DetectionCleanResponseDTO> call, Throwable t) {
+                    System.out.println(t.getMessage());
+                    Log.d("올바른 분리 배출 X", "품목 분류에 실패했습니다.");
+                    System.out.println("올바른 분리 배출 X : 품목 분류에 실패했습니다.");
+
+                    progressOFF();
+                    intent.putExtra("data", "품목 분류에 실패했습니다.");
+                    intent.putExtra("title","올바른 분리배출 확인");
+                    startActivity(intent);
+                }
+            });
+
+        }
+        catch (Exception e) {
+            return;
+        }
+
+    }
+
+    public void checkDetectionCleanCase() {   // 올바른 분리 배출 확인
+        System.out.println("resposeCode : " +  detectionClean.getCode());
+        switch ( detectionClean.getCode()) {
+            case 100:
+                Log.d("올바른 분리 배출 O", detectionClean.getMsg());
+                intent.putExtra("data",detectionClean.getDescription() + "입니다!!" + "\n포인트를 획득하셨습니다!!\n현재 " + detectionClean.getUser_name()
+                        + "님의 포인트는 " + detectionClean.getValue() + "점 입니다.");
+                break;
+            case 101:
+            case 102:
+            case 103:
+                Log.d("올바른 분리 배출 X", detectionClean.getMsg());
+                intent.putExtra("data",detectionClean.getMsg());
+                break;
+        }
+    }
 
     public void progressON(String message) {
         ImageManager.getInstance().progressON((Activity)AppManager.getInstance().getContext(), message);

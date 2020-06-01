@@ -6,29 +6,45 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.wasterecycleproject.adapter.MeasureSliderAdapter;
 import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.manager.ImageManager;
+import com.example.wasterecycleproject.model.ListForSearchWaste;
 import com.example.wasterecycleproject.model.Measure;
+import com.example.wasterecycleproject.model.MeasureFee;
+import com.example.wasterecycleproject.model.MeasureFeeDTO;
+import com.example.wasterecycleproject.model.MeasureFeeResponseDTO;
 import com.example.wasterecycleproject.model.MeasureLengthResponseDTO;
+import com.example.wasterecycleproject.model.SliderItem;
 import com.example.wasterecycleproject.util.ConfirmDialog;
 import com.example.wasterecycleproject.util.RestApi;
 import com.example.wasterecycleproject.util.RestApiUtil;
 import com.example.wasterecycleproject.util.UserToken;
+import com.smarteist.autoimageslider.IndicatorAnimations;
+import com.smarteist.autoimageslider.IndicatorView.draw.controller.DrawController;
+import com.smarteist.autoimageslider.SliderAnimations;
+import com.smarteist.autoimageslider.SliderView;
+import com.squareup.picasso.Picasso;
+
 import static com.example.wasterecycleproject.util.RestApi.BASE_URL;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -42,15 +58,31 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
 
     private File imgFile;
     private ConfirmDialog confirmDialog;
-    private ImageView imageView;
     private String imgPath;
     private Intent intent;
     ArrayList<Measure> measureArrayList;
 
-    private Spinner spinner; //콤보박스
-    private ArrayList<String> categoryList; //딥러닝 결과를 통해 나온 문자열 리스트
-    private ArrayAdapter<String> categoryAdapter;
+    //autoCompleteTextView
+    private AutoCompleteTextView autoCompleteTextView;
+    private ListForSearchWaste listForSearchWaste;
+    private List<String> list;
+
+    //가로, 세로 길이
+    private float width;
+    private float height;
+    private TextView tv_width;
+    private TextView tv_height;
+    //사진 위치
+    private int slidePosition;
+
+    //sliderView
+    private SliderView sliderView;
+    private MeasureSliderAdapter adapter;
+    //수수료 측정
     private Button measureFeeBtn;
+    private MeasureFeeDTO measureFeeDTO;
+    private RestApiUtil mRestApiUtil;
+    private Intent measureFeeIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,131 +94,224 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
         setContentView(R.layout.activity_measure);
         setActionBar();
         init();
-        initSpinner();
+        //
         addListener();
 
         MeasureLength();
     }
 
 
-    private void setActionBar() {
+    public void setActionBar() {
         CustomActionBar ca = new CustomActionBar(this, getSupportActionBar());
         ca.setActionBar();
     }
 
-    private void init() {
-        imageView = findViewById(R.id.ImageView);
+    public void init() {
+
         intent = getIntent();                                   // RecycleFragment 로부터 받은 intent
         imgPath = intent.getStringExtra("imgFilePath");  // intent 에서 얻은 imgPath
         Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
-        imageView.setImageBitmap(bitmap);
 
+        //confirmDialog
+        confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext());
 
-        spinner = findViewById(R.id.spinner);
-        categoryList = new ArrayList<>();
+        //autoCompleteTextView, TextView
+        list = new ArrayList<String>();
+        listForSearchWaste = new ListForSearchWaste(list);
+        listForSearchWaste.addSearchList();
+
+        autoCompleteTextView = findViewById(R.id.MeasureAutoCompleteTextView);
+        autoCompleteTextView.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line,  listForSearchWaste.getSearchWasteList() ));
+
+        //가로 세로 길이 textView
+        tv_height = findViewById(R.id.heightTextView);
+        tv_width = findViewById(R.id.widthTextView);
+        tv_width.setText("가로 길이를 표시할 수 없습니다.");
+        tv_height.setText("세로 길이를 표시할 수 없습니다.");
+
+        //sliderView
+        sliderView = findViewById(R.id.imageSlider);
+
+        adapter = new MeasureSliderAdapter(this);
+        adapter.addItem(new SliderItem("Demo_Image_1", imgPath));
+        sliderView.setSliderAdapter(adapter);
+
+        sliderView.setIndicatorAnimation(IndicatorAnimations.THIN_WORM); //set indicator animation by using SliderLayout.IndicatorAnimations. :WORM or THIN_WORM or COLOR or DROP or FILL or NONE or SCALE or SCALE_DOWN or SLIDE and SWAP!!
+        sliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
+        sliderView.setAutoCycleDirection(SliderView.AUTO_CYCLE_DIRECTION_RIGHT);
+        sliderView.setIndicatorSelectedColor(Color.WHITE);
+        sliderView.setIndicatorUnselectedColor(Color.GRAY);
+        sliderView.setScrollTimeInSec(6000); //slide 하나 자동으로 넘어가는 시간
+        sliderView.setAutoCycle(true);
+        sliderView.startAutoCycle();
+
+        //수수료 측정 버튼
         measureFeeBtn = findViewById(R.id.measureFeeBtn);
     }
 
-    private void initSpinner() {
-        categoryList.add("선택해주세요"); //리스트에 콤보박스 추가
 
-
-
-        categoryAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_spinner_dropdown_item,
-                categoryList);
-        spinner.setAdapter(categoryAdapter);
-    }
-
-    private void addListener() {
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void addListener() {
+        //sliderView
+        sliderView.setOnIndicatorClickListener(new DrawController.ClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-//                Toast.makeText(getApplicationContext(), categoryList.get(i) + "가 선택되었습니다.", //선택되었을때 메소드
-//                        Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            public void onIndicatorClicked(int position) {
+                sliderView.setCurrentPagePosition(position);
+                slidePosition = position - 1;
+                try {
+                    width = measureArrayList.get(position - 1).getWidth();
+                    height = measureArrayList.get(position - 1).getHeight();
+                    tv_width.setText("가로 길이 : " + (int)measureArrayList.get(position - 1).getWidth() + "cm");
+                    tv_height.setText("세로 길이 : " + (int)measureArrayList.get(position - 1).getHeight() + "cm");
+                }
+                catch (Exception e) {
+                    Log.d("Exception : ", String.valueOf(e));
+                    Log.d("가로 길이", String.valueOf(width));
+                    Log.d("세로 길이", String.valueOf(height));
+                    tv_width.setText("가로 길이를 표시할 수 없습니다.");
+                    tv_height.setText("세로 길이를 표시할 수 없습니다.");
+                }
             }
         });
+
 
         measureFeeBtn.setOnClickListener(new Button.OnClickListener(){ //처분 수수료 확인 버튼 눌렀을때
 
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(MeasureActivity.this,PopupProperRecycleActivity.class);
-                intent.putExtra("title","규격에 따른 수수료 측정");
-                intent.putExtra("data","처분을 위한 수수료는 0원입니다");
-                startActivity(intent);
-
+                String searchWord = autoCompleteTextView.getText().toString();
+                measureFeeIntent = new Intent(AppManager.getInstance().getContext(), PopupProperRecycleActivity.class);
+                checkCase(searchWord);
             }
         });
     }
 
-    public void MeasureLength() {
-        confirmDialog = new ConfirmDialog(AppManager.getInstance().getContext());
-
-        if(imgPath == null) {
-            confirmDialog.setMessage("이미지를 선택해주세요.");
-            confirmDialog.show();
-            return;
+    public void checkCase(String searchWord) {
+        if(searchWord.length() == 0) {
+            measureFeeIntent.putExtra("data", "검색어를 입력해주세요.");
+            measureFeeIntent.putExtra("title","폐기물 수수료 측정");
+            startActivity(measureFeeIntent);
+        }
+        else if( slidePosition == -1 ) {
+            measureFeeIntent.putExtra("data", "올바른 길이 화면으로 이동해주세요.");
+            measureFeeIntent.putExtra("title","폐기물 수수료 측정");
+            startActivity(measureFeeIntent);
         }
         else {
-            progressON("길이 측정 중입니다...");
-            String token = "Token " + UserToken.getToken();
-            Retrofit mRetrofit = RestApiUtil.getRetrofitClient(this);
-            RestApi restApi = mRetrofit.create(RestApi.class);
+            measure_fee(searchWord);
+        }
+        return;
+    }
 
-            imgFile = new File(imgPath);
+    public void MeasureLength() {
+        progressON("길이 측정 중입니다...");
 
-            RequestBody imgFileReqBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
-            MultipartBody.Part image = MultipartBody.Part.createFormData("image", imgFile.getName(), imgFileReqBody);
+        String token = "Token " + AppManager.getInstance().getUser().getToken();
+        Retrofit mRetrofit = RestApiUtil.getRetrofitClient(this);
+        RestApi restApi = mRetrofit.create(RestApi.class);
+        imgFile = new File(imgPath);
+        RequestBody imgFileReqBody = RequestBody.create(MediaType.parse("image/*"), imgFile);
+        MultipartBody.Part image = MultipartBody.Part.createFormData("image", imgFile.getName(), imgFileReqBody);
 
-            Call<MeasureLengthResponseDTO> call = restApi.measure_length(token, image);
+        Call<MeasureLengthResponseDTO> call = restApi.measure_length(token, image);
 
-            call.enqueue(new Callback<MeasureLengthResponseDTO>() {
-                @Override
-                public void onResponse(Call<MeasureLengthResponseDTO> call, Response<MeasureLengthResponseDTO> response) {
-                    System.out.println(response.isSuccessful());
+        call.enqueue(new Callback<MeasureLengthResponseDTO>() {
+            @Override
+            public void onResponse(Call<MeasureLengthResponseDTO> call, Response<MeasureLengthResponseDTO> response) {
 
-                    if(response.isSuccessful()) {
+                System.out.println(response.isSuccessful());
+                System.out.println(response.body());
+                MeasureLengthResponseDTO measureLengthResponseDTO = response.body();
 
-                        MeasureLengthResponseDTO measureLengthResponseDTO = response.body();
-                        measureArrayList = measureLengthResponseDTO.getMeasure();
+                if (response.isSuccessful()) {
+                    measureArrayList = measureLengthResponseDTO.getMeasure();
+                    System.out.println(measureArrayList.size());
 
-                        System.out.println(measureArrayList.size());
-
-                        Glide.with(AppManager.getInstance().getContext())
-                                .load("http://3fc7e29c561a.ngrok.io" + measureArrayList.get(1).getImage())
-                                .into(imageView);
-
+                    if (measureArrayList.get(0).getCode() == 100) {
                         progressOFF();
-                        confirmDialog.setMessage("길이 측정 성공");
+                        confirmDialog.setMessage("길이 측정 완료!!\n올바른 길이 화면으로 이동해주세요!!");
+                        confirmDialog.show();
+
+                        for (int i = 0; i < measureArrayList.size(); i++) {
+                            adapter.addItem(new SliderItem(ImageManager.getInstance().getFullImageString(measureArrayList.get(i).getImage())));
+                        }
+
+                    }
+                    else if (measureArrayList.get(0).getCode() == 101) {
+                        Log.d("마커 인식", "실패");
+                        progressOFF();
+                        confirmDialog.setMessage(measureArrayList.get(0).getMsg());
                         confirmDialog.show();
 
                     }
                     else {
                         Log.d("길이 측정", "실패");
                         progressOFF();
-                        confirmDialog.setMessage("길이 측정 실패");  //딥러닝에서 결과가 안나왔을때 //빈 리스트 //서버에서 주는 것이 아무것도 없음
+                        confirmDialog.setMessage(measureArrayList.get(0).getMsg());  //딥러닝에서 결과가 안나왔을때 //빈 리스트 //서버에서 주는 것이 아무것도 없음
                         confirmDialog.show();
-
                     }
-                }
-
-                @Override
-                public void onFailure(Call<MeasureLengthResponseDTO> call, Throwable t) {
+                } else {
                     progressOFF();
-                    System.out.println(t.getMessage());
-                    Log.d("이미지 업로드", "실패");
-                    confirmDialog.setMessage("이미지 업로드 실패..."); //서버에 이미지 전송 실패
+                    Log.d("길이 측정", "실패");
+                    confirmDialog.setMessage("길이 측정 실패..."); //서버에 이미지 전송 실패
                     confirmDialog.show();
                 }
-            });
-        }
+
+            }
+
+            @Override
+            public void onFailure(Call<MeasureLengthResponseDTO> call, Throwable t) {
+                progressOFF();
+                System.out.println(t.getMessage());
+                Log.d("이미지 업로드", "실패");
+                confirmDialog.setMessage("이미지 업로드 실패..."); //서버에 이미지 전송 실패
+                confirmDialog.show();
+            }
+        });
+
+    }
+
+    public void measure_fee(String searchWord) {
+
+        progressON("수수료 측정 중입니다...");
+        String token = "Token " + AppManager.getInstance().getUser().getToken();
+        measureFeeDTO = new MeasureFeeDTO(searchWord, height, width);
+
+        mRestApiUtil = new RestApiUtil();
+        mRestApiUtil.getApi().measure_fee(token, measureFeeDTO).enqueue(new Callback<MeasureFeeResponseDTO>() {
+            @Override
+            public void onResponse(Call<MeasureFeeResponseDTO> call, Response<MeasureFeeResponseDTO> response) {
+                System.out.println("response.isSuccessful : " + response.isSuccessful());
+
+                if(response.isSuccessful()) {
+                    progressOFF();
+                    MeasureFeeResponseDTO measureFeeResponseDTO = response.body();
+                    MeasureFee measureFee = measureFeeResponseDTO.getFee();
+                    if(measureFee.getCode()==100) {
+                        measureFeeIntent.putExtra("data",measureFee.getItem_fee());
+                    }
+                    else if(measureFee.getCode() == 101) {
+                        measureFeeIntent.putExtra("data",measureFee.getMsg());
+                    }
+                }
+                else {
+                    progressOFF();
+                    measureFeeIntent.putExtra("data","품목명 잘못 입력 또는 길이에 따른\n 수수료가 없는 품목입니다.");
+                }
+                measureFeeIntent.putExtra("title","폐기물 수수료 측정");
+                startActivity(measureFeeIntent);
+            }
+
+            @Override
+            public void onFailure(Call<MeasureFeeResponseDTO> call, Throwable t) {
+                progressOFF();
+                System.out.println(t.getMessage());
+                measureFeeIntent.putExtra("data","품목명 잘못 입력 또는 길이에 따른\n 수수료가 없는 품목입니다.");
+                measureFeeIntent.putExtra("title","폐기물 수수료 측정");
+                startActivity(measureFeeIntent);
+            }
+        });
+
     }
 
 
@@ -196,4 +321,5 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
     public void progressOFF() {
         ImageManager.getInstance().progressOFF();
     }
+
 }

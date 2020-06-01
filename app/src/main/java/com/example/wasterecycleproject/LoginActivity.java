@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
 
         AppManager.getInstance().setContext(this);
         AppManager.getInstance().setResources(getResources());
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);  //타이틀바 없애기
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -140,16 +141,16 @@ public class LoginActivity extends AppCompatActivity {
 
                 if(response.isSuccessful()) {
 
-
+                    progressOFF();
                     LoginResponseDTO loginResponseDTO = response.body();
                     Log.d("토큰",loginResponseDTO.getToken());
                     UserToken.setToken(loginResponseDTO.getToken());
                     setUser(loginResponseDTO.getUser_id(), loginResponseDTO.getToken());
                     Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                     startActivity(intent);
-                    progressOFF();
                 }
                 else{
+                    progressOFF();
                     Toast.makeText(getApplicationContext(),"아이디 비밀번호가 맞지않습니다",Toast.LENGTH_SHORT).show();
                     Log.d("아이디 비밀번호가 맞지않습니다","실패");
                 }
@@ -158,6 +159,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
                 Log.d("통신","실패");
+                progressOFF();
             }
         });
     }
@@ -165,7 +167,6 @@ public class LoginActivity extends AppCompatActivity {
     public void setUser(String user_id, String token) {
         AppManager.getInstance().getUser().setUser_id(user_id);
         AppManager.getInstance().getUser().setToken(token);
-
     }
 
     public void progressON(String message) {

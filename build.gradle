@@ -18,6 +18,9 @@ buildscript {
 
 allprojects {
     repositories {
+        //추가 Glide 사용하기 위해
+        mavenCentral()
+
         google()
         jcenter()
         

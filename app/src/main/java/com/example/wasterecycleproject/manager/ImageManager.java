@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.view.textclassifier.TextLinks;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.wasterecycleproject.R;
+
+import static com.example.wasterecycleproject.util.RestApi.BASE_URL;
 //import com.example.voicepaper.util.Constants;
 
 public class ImageManager {
@@ -42,23 +45,44 @@ public class ImageManager {
         return instance;
     }
 
-//    public void GlideInto(Context context, ImageView iv, String url) {
-////
-////        RequestOptions requestOptions = new RequestOptions();
-////        requestOptions = requestOptions.transforms(new CenterCrop(), new RoundedCorners(8));
-////
-////        Glide.with(context)
-////                .load(url)
-////                .apply(requestOptions)
-////                .placeholder(R.drawable.ic_user_main) // loading img
-////                .error(R.drawable.ic_user_main) // error img
-////                .into(iv);
-////    }
+    public void GlideWithView(View view, ImageView iv2, String url) {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions = requestOptions
+                .override(340,220)
+                .fitCenter()
+                .placeholder(R.drawable.logo)
+                .error(R.drawable.logo);
 
-//    public String getFullImageString(String img_str, String type_str) {
-//        String buf[] = img_str.split("/");
-//        return Constants.URL + "/" + type_str + "/" + buf[2];
-//    }
+        Glide.with(view)
+                .load(url)
+                .apply(requestOptions)
+                .into(iv2);
+
+    }
+
+    public void GlideWithContext(Context context, ImageView iv, String url) {
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions = requestOptions
+                .override(340,220)
+                .fitCenter()
+                .placeholder(R.drawable.logo)
+                .error(R.drawable.logo);
+
+        Glide.with(context)
+                .load(url)
+                .apply(requestOptions)
+                .into(iv);
+    }
+
+    public String getFullImageString(String img_url) {
+        String url = BASE_URL;
+        if (img_url.charAt(0) == '/') {  // 서버에서 주는 imgUrl 의 첫 부분이 / 로 시작할 때
+            url = BASE_URL.substring(0, BASE_URL.length()-1); // BASE_URL의 마지막 부분의 / 을 자른다.
+        }
+        url = url + img_url;
+        Log.d("urllllllllllllllllllll", url);
+        return url;
+    }
 
     public String getRealPathFromURI(Context context, Uri contentUri) {
         int column_index = 0;

@@ -38,7 +38,8 @@
             android:layout_marginRight="10dp"
             android:gravity="center"
             android:text="Message"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:inputType="textMultiLine"/>
 
     </LinearLayout>
     <!-- Notice -->

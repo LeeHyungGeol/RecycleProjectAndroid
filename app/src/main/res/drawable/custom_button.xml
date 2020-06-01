@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="false" android:state_pressed="false">
+        <shape>
+            <solid android:color="@android:color/white"/>
+            <stroke android:color="#03A9F4"
+                android:width="1dp"/>
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</selector>
+
+<!--solid:버튼의 색상-->
+<!--stroke: 버튼의 테두리-->
+<!--corners: 모서리 둥글게 하는 정도-->

@@ -10,10 +10,16 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.example.wasterecycleproject.manager.AppManager;
+import com.example.wasterecycleproject.manager.ImageManager;
+
 public class PopupProperRecycleActivity extends Activity { //RecycleFragment 에 있는 도움말 버튼 클릭시 나타나는 팝업
 
-    private TextView properRecycleText;
+    private TextView popUpText;
     private TextView popUpTitle;
+
+    private String title;
+    private String data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,17 +28,16 @@ public class PopupProperRecycleActivity extends Activity { //RecycleFragment 에
         setContentView(R.layout.activity_popup_proper_recycle);
         init();
 
-
+        popUpText.setText(data);
+        popUpTitle.setText(title);
     }
 
     private void init() {
-        properRecycleText = findViewById(R.id.properRecycleText);
+        popUpText = findViewById(R.id.properRecycleText);
         popUpTitle = findViewById(R.id.popUpTitle);
         Intent intent = getIntent();
-        String data = intent.getStringExtra("data");
-        properRecycleText.setText(data);
-        String title = intent.getStringExtra("title");
-        popUpTitle.setText(title);
+        data = intent.getStringExtra("data");
+        title = intent.getStringExtra("title");
 
     }
 
@@ -56,6 +61,13 @@ public class PopupProperRecycleActivity extends Activity { //RecycleFragment 에
     public void onBackPressed() {
         //안드로이드 백버튼 막기
         return;
+    }
+
+    public void progressON(String message) {
+        ImageManager.getInstance().progressON((Activity) AppManager.getInstance().getContext(), message);
+    }
+    public void progressOFF() {
+        ImageManager.getInstance().progressOFF();
     }
 
 }

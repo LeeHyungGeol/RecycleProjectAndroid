@@ -144,11 +144,10 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
 
 
     public void addListener() {
-        //sliderViews
         sliderView.setCurrentPageListener(new SliderView.OnSliderPageListener() {
             @Override
             public void onSliderPageChanged(int position) {
-                sliderView.setCurrentPagePosition(position);
+//                sliderView.setCurrentPagePosition(position);
                 try {
                     width = measureArrayList.get(position).getWidth();
                     height = measureArrayList.get(position).getHeight();

@@ -59,6 +59,12 @@ public class ListForSearchWaste {
         searchWasteList.add("어항");
         searchWasteList.add("화분");
         searchWasteList.add("천막");
+        searchWasteList.add("서랍장");
+        searchWasteList.add("밥상");
+        searchWasteList.add("문짝");
+        searchWasteList.add("선풍기");
+        searchWasteList.add("쇼파");
+        searchWasteList.add("신발");
 
     }
 }

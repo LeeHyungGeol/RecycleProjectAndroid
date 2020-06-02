@@ -44,11 +44,10 @@ public class ImageManager {
             return instance = new ImageManager();
         return instance;
     }
-
+    //                .override(340,220)
     public void GlideWithView(View view, ImageView iv2, String url) {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions = requestOptions
-                .override(340,220)
                 .fitCenter()
                 .placeholder(R.drawable.logo)
                 .error(R.drawable.logo);

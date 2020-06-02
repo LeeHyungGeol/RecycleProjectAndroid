@@ -94,7 +94,7 @@ public class CommunityDetailActivity extends AppCompatActivity {
                     user_id=communityDetailResponseDTO.getCommunity().getUser_id();
                     detailID.setText(user_id);
                     Glide.with(CommunityDetailActivity.this)
-                            .load("http://14ec6024936c.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
+                            .load("http://d0763291a286.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
                             .into(detailImage);
                     Log.d("CommmunityDetail","response 성공");
 

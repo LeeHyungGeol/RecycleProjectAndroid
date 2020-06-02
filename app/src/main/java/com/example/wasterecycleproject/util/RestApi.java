@@ -39,7 +39,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 public interface RestApi {
-    String BASE_URL = "http://b144605d8c0f.ngrok.io/";
+    String BASE_URL = "http://d0763291a286.ngrok.io/";
 
     @POST("userApp/auth/register/")
     Call<RegisterResponseDTO> register(@Body User user);
@@ -83,7 +83,6 @@ public interface RestApi {
     @Multipart
     @POST("communityApp/community/")
     Call<RegisterBoardResponseDTO> register_board(@Header("Authorization") String token, @PartMap Map<String, RequestBody> boardMap);
-
 
     @GET("locationApp/location_waste_information/")
     Call<LocationWatseResponseDTO> location_waste_information(@Header("Authorization") String token);

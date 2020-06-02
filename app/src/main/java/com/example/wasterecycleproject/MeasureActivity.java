@@ -144,12 +144,28 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
 
 
     public void addListener() {
-        //sliderView
-        sliderView.setOnDragListener(new View.OnDragListener() {
+        //sliderViews
+        sliderView.setCurrentPageListener(new SliderView.OnSliderPageListener() {
             @Override
-            public boolean onDrag(View v, DragEvent event) {
-                Toast.makeText(MeasureActivity.this,"드래그",Toast.LENGTH_SHORT).show();
-                return false;
+            public void onSliderPageChanged(int position) {
+                sliderView.setCurrentPagePosition(position);
+                try {
+                    width = measureArrayList.get(position).getWidth();
+                    height = measureArrayList.get(position).getHeight();
+                    Log.d("width", String.valueOf(width));
+                    Log.d("height",String.valueOf(height));
+                    String widthText = "가로 길이: "+String.format("%.1f",measureArrayList.get(position).getWidth())+"cm";
+                    String heightText = "세로 길이: "+String.format("%.1f",measureArrayList.get(position).getHeight())+"cm";
+                    tv_width.setText(widthText);
+                    tv_height.setText(heightText);
+                }
+                catch (Exception e) {
+                    Log.d("Exception : ", String.valueOf(e));
+                    Log.d("가로 길이", String.valueOf(width));
+                    Log.d("세로 길이", String.valueOf(height));
+                    tv_width.setText("가로 길이를 확인할 수 없습니다");
+                    tv_height.setText("세로 길이를 확인할 수 없습니다");
+                }
             }
         });
 

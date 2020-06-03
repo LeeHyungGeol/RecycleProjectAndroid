@@ -246,7 +246,7 @@ public class RecycleFragment extends Fragment {
         switch ( detectionClean.getCode()) {
             case 100:
                 Log.d("올바른 분리 배출 O", detectionClean.getMsg());
-                intent.putExtra("data",detectionClean.getDescription() + "입니다"+detectionClean.getValue()+"포인트를 획득하셨습니다");
+                intent.putExtra("data",detectionClean.getDescription() + "입니다\n"+detectionClean.getValue()+"포인트를 획득하셨습니다");
                 break;
             case 101:
             case 102:

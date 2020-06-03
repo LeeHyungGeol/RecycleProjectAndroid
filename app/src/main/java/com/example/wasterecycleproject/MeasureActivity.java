@@ -251,6 +251,7 @@ public class MeasureActivity extends AppCompatActivity { //길이 확인 화면
                         confirmDialog.show();
 
                         for (int i = 0; i < measureArrayList.size(); i++) {
+
                             adapter.addItem(new SliderItem(ImageManager.getInstance().getFullImageString(measureArrayList.get(i).getImage())));
                         }
 

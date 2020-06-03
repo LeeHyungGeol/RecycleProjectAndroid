@@ -24,6 +24,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.wasterecycleproject.util.RestApi.BASE_URL;
+
 public class CommunityDetailActivity extends AppCompatActivity {
 
     private Button sendNoteBtn;
@@ -41,6 +43,7 @@ public class CommunityDetailActivity extends AppCompatActivity {
 
         AppManager.getInstance().setContext(this);
         AppManager.getInstance().setResources(getResources());
+
         setContentView(R.layout.activity_community_detail);
         init();
         addListener();
@@ -93,9 +96,13 @@ public class CommunityDetailActivity extends AppCompatActivity {
                     contextText.setText(communityDetailResponseDTO.getCommunity().getContent());
                     user_id=communityDetailResponseDTO.getCommunity().getUser_id();
                     detailID.setText(user_id);
-                    Glide.with(CommunityDetailActivity.this)
-                            .load("http://14ec6024936c.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
-                            .into(detailImage);
+
+                    String url = ImageManager.getInstance().getFullImageString(communityDetailResponseDTO.getCommunity().getImage());
+                    ImageManager.getInstance().GlideWithContext(AppManager.getInstance().getContext(), detailImage, url);
+
+//                    Glide.with(CommunityDetailActivity.this)
+//                            .load("http://192.168.43.144:8000"+communityDetailResponseDTO.getCommunity().getImage())
+//                            .into(detailImage);
                     Log.d("CommmunityDetail","response 성공");
 
                     progressOFF();

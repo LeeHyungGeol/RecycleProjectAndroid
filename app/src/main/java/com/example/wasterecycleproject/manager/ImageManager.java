@@ -59,10 +59,10 @@ public class ImageManager {
 
     }
 
+    //.override(340,220)
     public void GlideWithContext(Context context, ImageView iv, String url) {
         RequestOptions requestOptions = new RequestOptions();
         requestOptions = requestOptions
-                .override(340,220)
                 .fitCenter()
                 .placeholder(R.drawable.logo)
                 .error(R.drawable.logo);

@@ -24,18 +24,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="310dp"
         android:orientation="horizontal"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
-
-        <!--        <ImageView-->
-        <!--            android:id="@+id/ImageView"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="match_parent"-->
-        <!--            android:layout_weight="1"-->
-        <!--            android:background="#CCCACA"-->
-        <!--            app:srcCompat="@android:drawable/ic_menu_gallery" />-->
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cv_slider_mainActivity"

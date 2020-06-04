@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -24,6 +26,9 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.wasterecycleproject.R;
+
+import java.io.File;
+import java.io.IOException;
 
 import static com.example.wasterecycleproject.util.RestApi.BASE_URL;
 //import com.example.voicepaper.util.Constants;
@@ -110,8 +115,27 @@ public class ImageManager {
             return 180;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
             return 270;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_NORMAL) {
+            return 0;
         }
         return 0;
+    }
+
+    public Bitmap getRotatedBitmap(String imgPath) {
+        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
+
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(imgPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+        int exifDegree = ImageManager.getInstance().exifOrientationToDegrees(exifOrientation);
+
+        bitmap = ImageManager.getInstance().rotate(bitmap, exifDegree);
+
+        return bitmap;
     }
 
     public void progressON(Activity activity, String message) {

@@ -151,8 +151,9 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
         View view = inflater.inflate(R.layout.gallery_item, gallery, false);
         ImageView itemView = view.findViewById(R.id.itemImageView);
         imgFile = new File(image.getPath());
-        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-        itemView.setImageBitmap(bitmap);
+        //Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+        imageView.setImageBitmap(ImageManager.getInstance().getRotatedBitmap(imgFile.getAbsolutePath())); //새로 추가한 코드 : 회전시킨 이미지
+        //itemView.setImageBitmap(bitmap);
         gallery.addView(view); //이미지 레이아웃에 동적 추가
 
     }

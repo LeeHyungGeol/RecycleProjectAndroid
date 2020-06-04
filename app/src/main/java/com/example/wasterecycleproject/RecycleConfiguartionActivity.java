@@ -72,8 +72,6 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
     }
 
     private void init() {
-        intent = getIntent();                                   // RecycleFragment 로부터 받은 intent
-        imgPath = intent.getStringExtra("imgFilePath");  // intent 에서 얻은 imgPath
         spinner = findViewById(R.id.spinner);
         categoryList = new ArrayList<>();
         detection_lists = new ArrayList<>();
@@ -82,8 +80,9 @@ public class RecycleConfiguartionActivity extends AppCompatActivity { //딥러�
         imageView = findViewById(R.id.ImageView);
         intent = getIntent();                                   // RecycleFragment 로부터 받은 intent
         imgPath = intent.getStringExtra("imgFilePath");  // intent 에서 얻은 imgPath
-        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
-        imageView.setImageBitmap(bitmap);
+//        Bitmap bitmap = BitmapFactory.decodeFile(imgPath);
+        imageView.setImageBitmap(ImageManager.getInstance().getRotatedBitmap(imgPath)); //새로 추가한 코드 : 회전시킨 image
+//        imageView.setImageBitmap(bitmap);
         properOrNot= false;
     }
 

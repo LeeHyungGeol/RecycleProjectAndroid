@@ -96,10 +96,6 @@ public class CommunityDetailActivity extends AppCompatActivity {
                     contextText.setText(communityDetailResponseDTO.getCommunity().getContent());
                     user_id=communityDetailResponseDTO.getCommunity().getUser_id();
                     detailID.setText(user_id);
-                    Glide.with(CommunityDetailActivity.this)
-                            .load("http://de4087a5d582.ngrok.io"+communityDetailResponseDTO.getCommunity().getImage())
-                            .into(detailImage);
-
 
                     String url = ImageManager.getInstance().getFullImageString(communityDetailResponseDTO.getCommunity().getImage());
                     ImageManager.getInstance().GlideWithContext(AppManager.getInstance().getContext(), detailImage, url);

@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -46,6 +49,7 @@ import retrofit2.Retrofit;
 
 public class RecycleFragment extends Fragment {
 
+    private String imgPath;
     private ConfirmDialog confirmDialog;
     public File imgFile;
     public Image image;
@@ -150,8 +154,16 @@ public class RecycleFragment extends Fragment {
 
     public void imagePick(Image image) {
         imgFile = new File(image.getPath());
-        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-        imageView.setImageBitmap(bitmap);
+        imgPath = image.getPath();
+
+        imageView.setBackgroundColor(Color.WHITE);
+        imageView.setImageBitmap(ImageManager.getInstance().getRotatedBitmap(imgPath));
+
+//        imageView.setImageBitmap(ImageManager.getInstance().rotate(bitmap, exifDegree));
+
+//        imgFile = new File(image.getPath());
+//        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//        imageView.setImageBitmap(bitmap);
     }
 
     public void checkCase(int activityCase) {

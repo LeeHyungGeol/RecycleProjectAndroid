@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wasterecycleproject.R;
 import com.example.wasterecycleproject.model.Discharge;
+import com.example.wasterecycleproject.model.MatchingName;
 
 import java.util.List;
 
@@ -65,6 +66,7 @@ public class DischargeTipsListAdapter extends RecyclerView.Adapter<RecyclerView.
         TextView howToRecycleText;
         TextView correspondingText;
         TextView disCorrespondingText;
+        TextView recycleCategoryName;
 
         public ItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,6 +74,7 @@ public class DischargeTipsListAdapter extends RecyclerView.Adapter<RecyclerView.
             howToRecycleText = itemView.findViewById(R.id.howToRecycleText);
             correspondingText = itemView.findViewById(R.id.correspondingText);
             disCorrespondingText = itemView.findViewById(R.id.disCorrespondingText);
+            recycleCategoryName = itemView.findViewById(R.id.recycleCategoryName);
         }
     }
 
@@ -97,16 +100,23 @@ public class DischargeTipsListAdapter extends RecyclerView.Adapter<RecyclerView.
         String howToRecycle = discharges.get(position).getContent();
         String[] temps = howToRecycle.split("/");
         StringBuilder recycleTip = new StringBuilder(new String());
-        for(String temp: temps){
-            recycleTip.append("- ").append(temp).append("\n");
+        if(temps.length>1){
+            for(int i=0;i<temps.length-1;i++){
+                recycleTip.append("- ").append(temps[i]).append("\n");
+            }
+            recycleTip.append("- ").append(temps[temps.length-1]);
         }
-
+        else{
+            recycleTip.append("- ").append(temps[0]);
+        }
+        String name = discharges.get(position).getName();
         String corresponding = discharges.get(position).getItem_corresponding();
         String disCorresponding = discharges.get(position).getItem_discorresponding();
         viewHolder.categoryText.setText("- "+category);
         viewHolder.howToRecycleText.setText(recycleTip);
         viewHolder.correspondingText.setText("- "+corresponding);
         viewHolder.disCorrespondingText.setText("- "+disCorresponding);
+        viewHolder.recycleCategoryName.setText("- "+name);
 
     }
 

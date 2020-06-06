@@ -183,6 +183,8 @@ public class RegisterBoardActivity extends FragmentActivity { //나눔 게시글
                     progressOFF();
                     setResult(Activity.RESULT_OK);
                     finish();
+                    Intent intent = new Intent(RegisterBoardActivity.this,AdvertiseActivity.class);
+                    startActivity(intent);
                 }
                 else {
                     progressOFF();

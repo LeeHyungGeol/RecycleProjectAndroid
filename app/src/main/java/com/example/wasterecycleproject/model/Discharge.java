@@ -2,10 +2,19 @@ package com.example.wasterecycleproject.model;
 
 public class Discharge {
     private int idx;
+    private String name;
     private String category_m_name;
     private String content;
     private String item_corresponding;
     private String item_discorresponding;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getIdx() {
         return idx;

@@ -1,5 +1,6 @@
 package com.example.wasterecycleproject.util;
 
+import com.example.wasterecycleproject.model.AdvertisementResponseDTO;
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
 import com.example.wasterecycleproject.model.AllNoteResponseDTO;
 import com.example.wasterecycleproject.model.CommunityDetailResponseDTO;
@@ -39,7 +40,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 public interface RestApi {
-    String BASE_URL = "http://2fb2d68d575e.ngrok.io/";
+    String BASE_URL = "http://ddd13d9112bf.ngrok.io/";
 
 
     @POST("userApp/auth/register/")
@@ -96,6 +97,9 @@ public interface RestApi {
 
     @POST("locationApp/update_location/")
     Call<LocationUpdateResponseDTO>location_update(@Header("Authorization") String token, @Body LocationUpdateDTO locationUpdateDTO);
+
+    @GET("detectionApp/advertisement/")
+    Call<AdvertisementResponseDTO> advertisement(@Header("Authorization") String token);
 
 
 }

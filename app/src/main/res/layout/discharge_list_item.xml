@@ -23,6 +23,18 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="품목명"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/recycleCategoryName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:text="분류"
                 android:textSize="18sp" />
 

@@ -16,6 +16,7 @@ import com.example.wasterecycleproject.adapter.DischargeTipsListAdapter;
 import com.example.wasterecycleproject.manager.AppManager;
 import com.example.wasterecycleproject.manager.ImageManager;
 import com.example.wasterecycleproject.model.Discharge;
+import com.example.wasterecycleproject.model.MatchingName;
 import com.example.wasterecycleproject.model.SearchWordDTO;
 import com.example.wasterecycleproject.model.SearchWordResponseDTO;
 import com.example.wasterecycleproject.model.SendNoteResponseDTO;
@@ -37,6 +38,9 @@ public class DischargeTipsActivity extends AppCompatActivity { //배출 요령 �
     private String searchWord;
     private ArrayList<Discharge> discharges;
     private ArrayList<Discharge> discharge;
+    private ArrayList<MatchingName> matchingNames;
+    private ArrayList<MatchingName> matchingName;
+
     private boolean isLoading;
 
     @Override
@@ -59,6 +63,8 @@ public class DischargeTipsActivity extends AppCompatActivity { //배출 요령 �
         searchWordDTO = new SearchWordDTO();
         discharges = new ArrayList<>();
         discharge = new ArrayList<>();
+        matchingNames = new ArrayList<>();
+        matchingName = new ArrayList<>();
         recyclerView = findViewById(R.id.dischargeRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(DischargeTipsActivity.this));
         dischargeTipsListAdapter = new DischargeTipsListAdapter(discharge);
@@ -81,8 +87,21 @@ public class DischargeTipsActivity extends AppCompatActivity { //배출 요령 �
                     dischargeTipsListAdapter.notifyDataSetChanged();
                     SearchWordResponseDTO searchWordResponseDTO = response.body();
                     discharges= searchWordResponseDTO.getTextVoiceDischargeTips();
+                    matchingNames = searchWordResponseDTO.getMatching_name();
 
                     final int dischargeSize = discharges.size();
+
+                    if(matchingNames.size()==0){
+                        for(int i=0;i<dischargeSize;i++){
+                            discharges.get(i).setName(discharges.get(i).getCategory_m_name());
+                        }
+                    }
+                    else{
+                        for(int i=0;i<dischargeSize;i++){
+                            discharges.get(i).setName(matchingNames.get(i).getCg_name());
+                        }
+                    }
+
 
                     for(int i=0;i<dischargeSize;i++){
                         discharge.add(discharges.get(i));

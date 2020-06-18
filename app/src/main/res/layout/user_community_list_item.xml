@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="120dp"
+    android:layout_height="100dp"
     app:cardElevation="8dp"
     app:cardUseCompatPadding="true">
 
@@ -20,8 +21,8 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/noteContent"
-                android:layout_width="wrap_content"
+                android:id="@+id/communityTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="title"
                 android:textColor="@android:color/black"
@@ -29,20 +30,14 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/noteSenderId"
-                android:layout_width="wrap_content"
+                android:id="@+id/communityUserID"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="id" />
 
             <TextView
-                android:id="@+id/noteRecvId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="id" />
-
-            <TextView
-                android:id="@+id/noteDate"
-                android:layout_width="wrap_content"
+                android:id="@+id/communityDate"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="date"
                 android:textColor="@android:color/darker_gray"
@@ -54,15 +49,17 @@
             android:id="@+id/deleteBtn"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="center|bottom"
+            android:layout_weight="1"
             android:background="@drawable/button_background"
             android:textColor="@color/colorWhite"
-            android:layout_weight="1"
+            android:layout_gravity="center|bottom"
             android:layout_marginRight="5dp"
             android:layout_marginBottom="5dp"
             android:text="삭제" />
 
     </LinearLayout>
+
+
 
 
 </androidx.cardview.widget.CardView>

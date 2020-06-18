@@ -83,6 +83,7 @@ public class UserNoteActivity extends AppCompatActivity { //마이페이지에�
                         messageList.add(allNoteResponseDTO.getMessage_list().getSend_message().get(index));
                     }
 
+
                     if(messageList.size()<10){
                         for(int i=0;i<messageList.size();i++){
                             message.add(messageList.get(i));

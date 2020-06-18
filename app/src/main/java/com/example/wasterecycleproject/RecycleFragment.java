@@ -158,12 +158,6 @@ public class RecycleFragment extends Fragment {
 
         imageView.setBackgroundColor(Color.WHITE);
         imageView.setImageBitmap(ImageManager.getInstance().getRotatedBitmap(imgPath));
-
-//        imageView.setImageBitmap(ImageManager.getInstance().rotate(bitmap, exifDegree));
-
-//        imgFile = new File(image.getPath());
-//        Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-//        imageView.setImageBitmap(bitmap);
     }
 
     public void checkCase(int activityCase) {

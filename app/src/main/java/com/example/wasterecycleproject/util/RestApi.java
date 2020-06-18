@@ -4,6 +4,7 @@ import com.example.wasterecycleproject.model.AdvertisementResponseDTO;
 import com.example.wasterecycleproject.model.AllCommunityResponseDTO;
 import com.example.wasterecycleproject.model.AllNoteResponseDTO;
 import com.example.wasterecycleproject.model.CommunityDetailResponseDTO;
+import com.example.wasterecycleproject.model.DeleteResponseDTO;
 import com.example.wasterecycleproject.model.DetectionCleanResponseDTO;
 import com.example.wasterecycleproject.model.DetectionResponseDTO;
 import com.example.wasterecycleproject.model.LocationUpdateDTO;
@@ -31,6 +32,7 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -40,8 +42,7 @@ import retrofit2.http.PartMap;
 import retrofit2.http.Path;
 
 public interface RestApi {
-    String BASE_URL = "http://ddd13d9112bf.ngrok.io/";
-
+    String BASE_URL = "http://92f966bcad4b.ngrok.io/";
 
     @POST("userApp/auth/register/")
     Call<RegisterResponseDTO> register(@Body User user);
@@ -100,6 +101,12 @@ public interface RestApi {
 
     @GET("detectionApp/advertisement/")
     Call<AdvertisementResponseDTO> advertisement(@Header("Authorization") String token);
+
+    @DELETE("communityApp/community/detail/{idx}/")
+    Call<DeleteResponseDTO> delete_community(@Header("Authorization") String token, @Path("idx") int idx);
+
+    @DELETE("messageApp/message/{user_id}/")
+    Call<DeleteResponseDTO> delete_message(@Header("Authorization") String token, @Path("user_id") String user_id);
 
 
 }

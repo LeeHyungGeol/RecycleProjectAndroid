@@ -1,11 +1,13 @@
 package com.example.wasterecycleproject.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,15 +17,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.wasterecycleproject.PopUpSendNoteActivity;
 import com.example.wasterecycleproject.R;
+import com.example.wasterecycleproject.model.DeleteResponseDTO;
 import com.example.wasterecycleproject.model.Message;
+import com.example.wasterecycleproject.util.RestApiUtil;
+import com.example.wasterecycleproject.util.UserToken;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     public List<Message> messages;
+    private RestApiUtil mRestApiUtil = new RestApiUtil();
 
 
     public UserNoteListAdapter(List<Message> message) {
@@ -53,6 +63,49 @@ public class UserNoteListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 intent.putExtra("user_id",messages.get(position).getSender_id());
                 context.startActivity(intent);
 //                Toast.makeText(context, position +"", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        viewHolder.itemView.findViewById(R.id.deleteBtn).setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Context context = v.getContext();
+                mRestApiUtil.getApi().delete_message("Token "+ UserToken.getToken(),messages.get(position).getReceiver_id()).enqueue(new Callback<DeleteResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<DeleteResponseDTO> call, Response<DeleteResponseDTO> response) {
+                        if(response.isSuccessful()){
+                        }
+                        else{
+                            Log.d("response","실패");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DeleteResponseDTO> call, Throwable t) {
+                        Log.d("통신","실패");
+                    }
+                });
+
+                mRestApiUtil.getApi().delete_message("Token "+ UserToken.getToken(),messages.get(position).getSender_id()).enqueue(new Callback<DeleteResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<DeleteResponseDTO> call, Response<DeleteResponseDTO> response) {
+                        if(response.isSuccessful()){
+
+                            Toast.makeText(context,"삭제완료",Toast.LENGTH_SHORT).show();
+                            ((Activity)context).finish();
+                        }
+                        else{
+                            Log.d("response","실패");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DeleteResponseDTO> call, Throwable t) {
+                        Log.d("통신","실패");
+                    }
+                });
+
+
             }
         });
 

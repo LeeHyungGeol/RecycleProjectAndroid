@@ -1,5 +1,6 @@
 package com.example.wasterecycleproject.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,13 +19,22 @@ import com.example.wasterecycleproject.CommunityFragment;
 import com.example.wasterecycleproject.R;
 import com.example.wasterecycleproject.RegisterBoardActivity;
 import com.example.wasterecycleproject.model.Community;
+import com.example.wasterecycleproject.model.DeleteResponseDTO;
+import com.example.wasterecycleproject.util.RestApiUtil;
+import com.example.wasterecycleproject.util.UserToken;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_TYPE_ITEM = 0;
     private final int VIEW_TYPE_LOADING = 1;
     private List<Community> communities;
+    private RestApiUtil mRestApiUtil = new RestApiUtil();
 
 
     public UserCommunityListAdapter(List<Community> communityList) {
@@ -34,7 +45,7 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ITEM) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_list_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_community_list_item, parent, false);
             return new ItemViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_item_loading, parent, false);
@@ -54,6 +65,31 @@ public class UserCommunityListAdapter extends RecyclerView.Adapter<RecyclerView.
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("position",communities.get(position).getIdx());
                 context.startActivity(intent);
+            }
+        });
+
+        viewHolder.itemView.findViewById(R.id.deleteBtn).setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Context context = v.getContext();
+                mRestApiUtil.getApi().delete_community("Token "+ UserToken.getToken(), communities.get(position).getIdx()).enqueue(new Callback<DeleteResponseDTO>() {
+                    @Override
+                    public void onResponse(Call<DeleteResponseDTO> call, Response<DeleteResponseDTO> response) {
+                        if(response.isSuccessful()){
+                            Toast.makeText(context,"삭제완료",Toast.LENGTH_SHORT).show();
+                            ((Activity)context).finish();
+                        }
+                        else{
+                            Log.d("response","실패");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<DeleteResponseDTO> call, Throwable t) {
+                        Log.d("통신","실패");
+                    }
+                });
+
             }
         });
 

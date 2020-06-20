@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".CommunityEditActivity"></activity>
         <activity
             android:name=".AdvertiseActivity"
             android:theme="@android:style/Theme.Dialog" />

@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.wasterecycleproject.manager.AppManager;
@@ -29,6 +30,7 @@ import static com.example.wasterecycleproject.util.RestApi.BASE_URL;
 public class CommunityDetailActivity extends AppCompatActivity {
 
     private Button sendNoteBtn;
+    private Button editBtn;
     private TextView detailID;
     private ImageView detailImage;
     private RestApiUtil mRestApiUtil;
@@ -63,10 +65,27 @@ public class CommunityDetailActivity extends AppCompatActivity {
 
             }
         });
+        editBtn.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(user_id.equals(AppManager.getInstance().getUser().getUser_id()))
+                {
+                    finish();
+                    Intent intent = new Intent(CommunityDetailActivity.this, CommunityEditActivity.class);
+                    intent.putExtra("position",communityidx);
+                    startActivity(intent);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"자신이 올린 게시글만 수정할 수 있습니다",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
     }
 
     private void init() {
         sendNoteBtn = findViewById(R.id.sendNoteBtn);
+        editBtn = findViewById(R.id.editBtn);
         detailID = findViewById(R.id.detailID);
         detailImage = findViewById(R.id.detailImage);
         mRestApiUtil = new RestApiUtil();

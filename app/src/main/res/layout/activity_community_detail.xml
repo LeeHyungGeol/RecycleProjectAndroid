@@ -89,14 +89,32 @@
         android:layout_marginTop="5dp"
         android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/sendNoteBtn"
-        android:layout_width="100dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="@drawable/main_button_background"
-        android:textColor="#FFFFFF"
-        android:layout_marginTop="5dp"
-        android:text="쪽지 보내기" />
+        android:gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/sendNoteBtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/main_button_background"
+            android:textColor="#FFFFFF"
+
+            android:text="쪽지 보내기" />
+
+        <Button
+            android:id="@+id/editBtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/button_background"
+            android:textColor="@color/colorWhite"
+            android:text="수정하기" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

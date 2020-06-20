@@ -4,13 +4,6 @@ public class RegisterBoardResponseDTO {
 
     private Community community;
 
-    public RegisterBoardResponseDTO() {
-    }
-
-    public RegisterBoardResponseDTO(Community community) {
-        this.community = community;
-    }
-
     public Community getCommunity() {
         return community;
     }

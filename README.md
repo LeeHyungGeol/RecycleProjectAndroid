@@ -61,7 +61,11 @@
 
 ### 나의 역할
 
+- MySQL을 이용한 DB 설계
+- Django를 이용한 Restful API 서버 구축 
+- Django에 MVT 패턴을 적용
 - Android 구현
+- MVP 패턴 및 Singleton Pattern을 공부 및 적용  
 - 딥러닝 모델 구현을 위한 데이터 수집 및 정제
 - 객체인식 딥러닝(Yolov3) 모델 구현
 

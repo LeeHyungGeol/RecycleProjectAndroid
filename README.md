@@ -68,7 +68,3 @@
 ### 시연 영상
 
 [https://www.youtube.com/watch?v=Xwgt8fvhNH8](https://www.youtube.com/watch?v=Xwgt8fvhNH8)
-
-### [🛠 실행화면 및 자세한 설명]
-
-[노션 문서](https://www.notion.so/Android-cdbae277436441cea1532097b38a89c4)
